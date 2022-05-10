@@ -1,0 +1,66 @@
+[
+    {
+        "emote": "angelic",
+        "path": "cat_emotes/angelic.png"
+    },
+    {
+        "emote": "angry",
+        "path": "cat_emotes/angry.png"
+    },
+    {
+        "emote": "awe",
+        "path": "cat_emotes/awe.png"
+    },
+    {
+        "emote": "confounded",
+        "path": "cat_emotes/confounded.png"
+    },
+    {
+        "emote": "cry",
+        "path": "cat_emotes/cry.png"
+    },
+    {
+        "emote": "demonic_smile",
+        "path": "cat_emotes/demonic_smile.png"
+    },
+    {
+        "emote": "expressionless",
+        "path": "cat_emotes/expressionless.png"
+    },
+    {
+        "emote": "grin",
+        "path": "cat_emotes/grin.png"
+    },
+    {
+        "emote": "happy",
+        "path": "cat_emotes/happy.png"
+    },
+    {
+        "emote": "kiss",
+        "path": "cat_emotes/kiss.png"
+    },
+    {
+        "emote": "love",
+        "path": "cat_emotes/love.png"
+    },
+    {
+        "emote": "overly_happy",
+        "path": "cat_emotes/overly_happy.png"
+    },
+    {
+        "emote": "panic",
+        "path": "cat_emotes/panic.png"
+    },
+    {
+        "emote": "sleep",
+        "path": "cat_emotes/sleep.png"
+    },
+    {
+        "emote": "smug",
+        "path": "cat_emotes/smug.png"
+    },
+    {
+        "emote": "tired",
+        "path": "cat_emotes/tired.png"
+    }
+]
