@@ -1,3 +1,8 @@
+import time
+import random
+from concurrent.futures import thread
+from threading import Thread
+
 
 class PepPet:
     # Metrics
@@ -32,31 +37,35 @@ class PepPet:
 
         print("Feeding " + self.name + " " + food.name)
 
-        self.happiness += food.happiness_gain
-        self.hunger += food.hunger_gain
+        self.addHappiness(food.happiness_gain)
+        self.addHunger(food.hunger_gain)
         self.experience += food.exp
 
-        # Stats are maxed at 10
-        if (self.happiness > 10):
-            self.happiness = 10
+        self.foods[food.name] -= 1
+        self.levelUp()
 
-        if (self.hunger > 10):
+    def addHunger(self, value):
+        self.hunger += value
+        if self.hunger > 10:
             self.hunger = 10
             # Overfeeding makes the Pet unhappy.
-            if (self.happiness != 0):
+            if self.happiness != 0:
                 self.happiness -= 1
             print("You overfed " + self.name)
         print("----------------------------")
 
-        self.foods[food.name] -= 1
-        self.levelUp()
+    def addHappiness(self, value):
+        self.happiness += value
+        # Stats are maxed at 10
+        if self.happiness > 10:
+            self.happiness = 10
 
     """
     Check if the Pep Pet can level up and do so if necessary
     """
 
     def levelUp(self):
-        if (self.experience >= 100):
+        if self.experience >= 100:
             self.level += 1
             self.experience = self.experience - 100
 
@@ -81,6 +90,32 @@ class PepPet:
         print("Foods: " + str(self.foods))
         print("----------------------------")
 
+    """
+    Functions to randomly fluctuate hunger/happiness over the course of the day 
+    The current naive implementation is to randomly decide to decrease hunger every 5 seconds.
+    In the real device it should take much longer (every 5 minutes, every hour maybe)
+    """
+
+    def hungerControl(self):
+        for i in range(0, 24):
+            time.sleep(5)
+            random_int = random.randint(0, 9)
+            if random_int < 5:
+                print("Fluctuate hunger now")
+                print("----------------------------")
+
+                self.addHunger(-1)
+
+    def happinessControl(self):
+        for i in range(0, 24):
+            time.sleep(5)
+            random_int = random.randint(0, 9)
+            if random_int > 5:
+                print("Decrease happiness now")
+                print("----------------------------")
+
+                self.addHappiness(-1)
+
 
 class Food:
     def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
@@ -95,20 +130,28 @@ myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 chicken = Food("Chicken")
 
-myPet.collectFood(steak)
-myPet.collectFood(steak)
-myPet.collectFood(steak)
-myPet.collectFood(steak)
 
-myPet.showPet()
+hungerLoss = Thread(target=myPet.hungerControl, args=[])
+happinessLoss = Thread(target=myPet.happinessControl)
 
-myPet.feed(steak)
-myPet.feed(steak)
-myPet.feed(steak)
-myPet.feed(steak)
-myPet.feed(chicken)
-myPet.feed(chicken)
-myPet.feed(chicken)
-myPet.feed(chicken)
+hungerLoss.start()
+happinessLoss.start()
 
-myPet.showPet()
+# # myPet.hungerControl()
+# myPet.collectFood(steak)
+# myPet.collectFood(steak)
+# myPet.collectFood(steak)
+# myPet.collectFood(steak)
+
+# # myPet.showPet()
+
+# myPet.feed(steak)
+# myPet.feed(steak)
+# myPet.feed(steak)
+# myPet.feed(steak)
+# myPet.feed(chicken)
+# myPet.feed(chicken)
+# myPet.feed(chicken)
+# myPet.feed(chicken)
+
+# myPet.showPet()
