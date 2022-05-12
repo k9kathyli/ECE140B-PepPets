@@ -67,11 +67,13 @@ class PepPet:
 
     def addHunger(self, value):
         self.hunger += value
+        if self.hunger < 0:
+            self.hunger = 0
         if self.hunger > 10:
             self.hunger = 10
             # Overfeeding makes the Pet unhappy.
             if self.happiness != 0:
-                self.happiness -= 1
+                self.addHappiness(-1)
             print("You overfed " + self.name)
         print("----------------------------")
 
@@ -80,6 +82,8 @@ class PepPet:
         # Stats are maxed at 10
         if self.happiness > 10:
             self.happiness = 10
+        if self.happiness < 0:
+            self.happiness = 0
 
     """
     Add a Food item to the Pep Pet's inventory.
