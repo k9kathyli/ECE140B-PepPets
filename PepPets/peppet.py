@@ -4,13 +4,27 @@ from concurrent.futures import thread
 from threading import Thread
 
 
+class Food:
+    def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
+        self.name = name
+        self.hunger_gain = hunger
+        self.happiness_gain = happiness
+        self.exp = exp
+
+
+edibles = [Food("chicken", 1),
+           Food("steak", 3, 0, 5),
+           Food("fish", 1, 1, 5),
+           Food("pineapple", 2, 1, 10)]
+
+
 class PepPet:
     # Metrics
     happiness = 0
     hunger = 0
     experience = 0
     level = 0
-
+    face = "depressed"
     # Info
     name = "Pep Pet 1"
 
@@ -36,13 +50,20 @@ class PepPet:
             return
 
         print("Feeding " + self.name + " " + food.name)
-
         self.addHappiness(food.happiness_gain)
         self.addHunger(food.hunger_gain)
-        self.experience += food.exp
-
+        self.addExperience(food.exp)
         self.foods[food.name] -= 1
-        self.levelUp()
+        self.setMood()
+
+    def addExperience(self, value):
+        # Check if the Pep Pet can level up and do so if necessary
+        self.experience += value
+        if self.experience >= 100:
+            self.level += 1
+            self.experience = self.experience - 100
+            print(self.name + " leveled up!")
+            print("----------------------------")
 
     def addHunger(self, value):
         self.hunger += value
@@ -61,15 +82,6 @@ class PepPet:
             self.happiness = 10
 
     """
-    Check if the Pep Pet can level up and do so if necessary
-    """
-
-    def levelUp(self):
-        if self.experience >= 100:
-            self.level += 1
-            self.experience = self.experience - 100
-
-    """
     Add a Food item to the Pep Pet's inventory.
     Arguments: 
         - food : a Food object
@@ -85,8 +97,9 @@ class PepPet:
         print("Name: " + self.name)
         print("Hunger: " + str(self.hunger))
         print("Happiness: " + str(self.happiness))
-        print("Level:  " + str(self.level))
-        print("Experience: " + str(self.experience))
+        print(self.name + " is feeling " + self.face)
+        print("    Level:  " + str(self.level))
+        print("    Experience: " + str(self.experience))
         print("Foods: " + str(self.foods))
         print("----------------------------")
 
@@ -102,8 +115,6 @@ class PepPet:
             random_int = random.randint(0, 9)
             if random_int < 5:
                 print("Fluctuate hunger now")
-                print("----------------------------")
-
                 self.addHunger(-1)
 
     def happinessControl(self):
@@ -115,14 +126,24 @@ class PepPet:
                 print("----------------------------")
 
                 self.addHappiness(-1)
+                myPet.showPet()
 
+    # Calculate the Pet's mood according the hunger and happiness
 
-class Food:
-    def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
-        self.name = name
-        self.hunger_gain = hunger
-        self.happiness_gain = happiness
-        self.exp = exp
+    def setMood(self):
+        # Will have to associate with right picture in hardware
+        moods = ["excited", "happy", "fine", "mischievious", "neutral",
+                 "bored", "confused", "sad", "angry", "crying", "sick"]
+        if self.hunger < 3:
+            self.face = "hungry"
+        if self.happiness < 3:
+            self.face = random.choice(["depressed", "sad", "bored", "unhappy"])
+        else:
+            face_num = int((self.hunger + self.happiness)/2)
+            self.face = moods[10 - face_num]
+
+    def movementTracker(self):
+        step = True
 
 
 myPet = PepPet("Chonk")
@@ -131,27 +152,29 @@ steak = Food("Steak", 3, 1, 30)
 chicken = Food("Chicken")
 
 
-hungerLoss = Thread(target=myPet.hungerControl, args=[])
+hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 
+# Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()
 
+
 # # myPet.hungerControl()
-# myPet.collectFood(steak)
-# myPet.collectFood(steak)
-# myPet.collectFood(steak)
+myPet.collectFood(steak)
+myPet.collectFood(steak)
+myPet.collectFood(steak)
 # myPet.collectFood(steak)
 
-# # myPet.showPet()
+myPet.showPet()
 
+myPet.feed(steak)
+myPet.feed(steak)
 # myPet.feed(steak)
 # myPet.feed(steak)
-# myPet.feed(steak)
-# myPet.feed(steak)
-# myPet.feed(chicken)
-# myPet.feed(chicken)
-# myPet.feed(chicken)
-# myPet.feed(chicken)
+# # myPet.feed(chicken)
+# # myPet.feed(chicken)
+# # myPet.feed(chicken)
+# # myPet.feed(chicken)
 
-# myPet.showPet()
+myPet.showPet()
