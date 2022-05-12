@@ -1,9 +1,11 @@
 # Import oled libraries
 import board
 import busio
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageOps
 import adafruit_ssd1306
-import time
+
+# Import sleep module
+from time import sleep
 
 # Import json reader
 import json
@@ -36,7 +38,7 @@ while True:
     # Display image.
     disp.image(inv_image)
     disp.show()
-    time.sleep(1)
+    sleep(1)
 
     print(json_data[index % len(json_data)]['emote'])
     index += 1
