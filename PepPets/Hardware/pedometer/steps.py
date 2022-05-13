@@ -41,23 +41,26 @@ def read_raw_data(addr):
     return raw_data
 
 
-MPU_Init()
+def track_steps():
+    MPU_Init()
 
-while True:
-    # Read Accelerometer raw value
-    acc_x = read_raw_data(ACCEL_XOUT_H)
-    acc_y = read_raw_data(ACCEL_YOUT_H)
-    acc_z = read_raw_data(ACCEL_ZOUT_H)
-    current_vector = math.sqrt(pow(acc_x, 2) + pow(acc_y, 2) + pow(acc_z, 2))
+    while steps < 100:
+        # Read Accelerometer raw value
+        acc_x = read_raw_data(ACCEL_XOUT_H)
+        acc_y = read_raw_data(ACCEL_YOUT_H)
+        acc_z = read_raw_data(ACCEL_ZOUT_H)
+        current_vector = math.sqrt(
+            pow(acc_x, 2) + pow(acc_y, 2) + pow(acc_z, 2))
 
-    # print(current_vector)
-    # print ("Ax=%.2f" %acc_x, "\tAy=%.2f" %acc_y, "\tAz=%.2f" %acc_z)
+        # print(current_vector)
+        # print ("Ax=%.2f" %acc_x, "\tAy=%.2f" %acc_y, "\tAz=%.2f" %acc_z)
 
-    # Step threshold
-    steps += 1 if (current_vector - previous_vector) > 0.15 else 0
+        # Step threshold
+        steps += 1 if (current_vector - previous_vector) > 0.15 else 0
 
-    # Save current as previous before next loop
-    previous_vector = current_vector
+        # Save current as previous before next loop
+        previous_vector = current_vector
 
-    # Estimated time before next step
-    sleep(0.17)
+        # Estimated time before next step
+        sleep(0.17)
+    return True

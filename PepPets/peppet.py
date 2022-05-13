@@ -2,6 +2,7 @@ import time
 import random
 from concurrent.futures import thread
 from threading import Thread
+from Hardware.pedometer.steps import track_steps
 
 
 class Food:
@@ -27,6 +28,7 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
+    global_steps = 0
 
     closet = []
     # Dictionary of food name values mapped to the quantity of that food
@@ -138,6 +140,10 @@ class PepPet:
         # Will have to associate with right picture in hardware
         moods = ["excited", "happy", "fine", "mischievious", "neutral",
                  "bored", "confused", "sad", "angry", "crying", "sick"]
+
+        # Logic: If hunger < 3, mood defaults to "hungry"
+        #        If happiness < 3, mood defaults to one of "depressed", "sad", "bored", "unhappy"
+        #        Otherwise, take the average of the 2 metrics and assign mood based on that. (index of moods list)
         if self.hunger < 3:
             self.face = "hungry"
         if self.happiness < 3:
@@ -147,38 +153,55 @@ class PepPet:
             self.face = moods[10 - face_num]
 
     def movementTracker(self):
-        step = True
+        if track_steps():
+            self.global_steps += 100
+            print(self.name + " has walked " + self.global_steps)
+            print("----------------------------")
+            self.addHappiness(1)
 
+    def buttonListener(self):
+        time.sleep(7)
+        self.showPet()
+        return
+
+
+'''
+Thread 1: Hunger control: Fluctuates hunger over time
+Thread 2: Happiness control: Fluctuates happiness over time
+Thread 3: Pedometer/Step counter: Keeps track of steps and changes metrics depending on that
+Thread 4: Button listener: Handles user input (feeding, customization, etc)
+'''
 
 myPet = PepPet("Chonk")
-myPet.showPet()
-steak = Food("Steak", 3, 1, 30)
-chicken = Food("Chicken")
+# myPet.showPet()
+# steak = Food("Steak", 3, 1, 30)
+# chicken = Food("Chicken")
 
 
 hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
+movementTrack = Thread(target=myPet.movementTracker)
 
 # Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()
+movementTrack.start()
 
-
-# # myPet.hungerControl()
-myPet.collectFood(steak)
-myPet.collectFood(steak)
-myPet.collectFood(steak)
+# # # myPet.hungerControl()
 # myPet.collectFood(steak)
+# myPet.collectFood(steak)
+# myPet.collectFood(steak)
+# # myPet.collectFood(steak)
 
-myPet.showPet()
+# myPet.showPet()
 
-myPet.feed(steak)
-myPet.feed(steak)
 # myPet.feed(steak)
 # myPet.feed(steak)
-# # myPet.feed(chicken)
-# # myPet.feed(chicken)
-# # myPet.feed(chicken)
-# # myPet.feed(chicken)
+# # myPet.feed(steak)
+# # myPet.feed(steak)
+# # # myPet.feed(chicken)
+# # # myPet.feed(chicken)
+# # # myPet.feed(chicken)
+# # # myPet.feed(chicken)
 
-myPet.showPet()
+# myPet.showPet()
