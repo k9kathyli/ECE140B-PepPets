@@ -160,6 +160,7 @@ class PepPet:
             self.addHappiness(1)
 
     def buttonListener(self):
+        # Doesn't actually take any input, just prints the state of pet every 7 seconds.
         time.sleep(7)
         self.showPet()
         return
@@ -181,12 +182,13 @@ myPet = PepPet("Chonk")
 hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
+buttonControl = Thread(target=myPet.buttonListener)
 
 # Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()
 movementTrack.start()
-
+buttonControl.start()
 # # # myPet.hungerControl()
 # myPet.collectFood(steak)
 # myPet.collectFood(steak)
