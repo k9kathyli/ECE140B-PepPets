@@ -117,7 +117,7 @@ class PepPet:
 
     def hungerControl(self):
         for i in range(0, 24):
-            time.sleep(5)
+            time.sleep(10)
             random_int = random.randint(0, 9)
             if random_int < 5:
                 print("Fluctuate hunger now")
@@ -125,7 +125,7 @@ class PepPet:
 
     def happinessControl(self):
         for i in range(0, 24):
-            time.sleep(5)
+            time.sleep(10)
             random_int = random.randint(0, 9)
             if random_int > 5:
                 print("Decrease happiness now")
@@ -153,17 +153,20 @@ class PepPet:
             self.face = moods[10 - face_num]
 
     def movementTracker(self):
-        if track_steps():
-            self.global_steps += 100
-            print(self.name + " has walked " + self.global_steps)
-            print("----------------------------")
-            self.addHappiness(1)
+        while True:
+            if track_steps():
+                self.global_steps += 10
+                print(self.name + " has walked " + str(self.global_steps))
+                print("----------------------------")
+                self.addHappiness(1)
 
     def buttonListener(self):
         # Doesn't actually take any input, just prints the state of pet every 7 seconds.
-        time.sleep(7)
-        self.showPet()
-        return
+        while True:    
+            self.showPet()
+
+            time.sleep(7)
+        
 
 
 '''
@@ -183,10 +186,9 @@ hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
 buttonControl = Thread(target=myPet.buttonListener)
-
 # Start hunger and happiness fluctuators
-hungerLoss.start()
-happinessLoss.start()
+# hungerLoss.start()
+# happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
 # # # myPet.hungerControl()
