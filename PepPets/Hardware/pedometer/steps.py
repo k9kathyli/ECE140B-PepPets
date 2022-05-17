@@ -44,7 +44,7 @@ def read_raw_data(addr):
 def track_steps():
     MPU_Init()
 
-    while steps < 100:
+    while steps < 10:
         # Read Accelerometer raw value
         acc_x = read_raw_data(ACCEL_XOUT_H)
         acc_y = read_raw_data(ACCEL_YOUT_H)

@@ -153,11 +153,12 @@ class PepPet:
             self.face = moods[10 - face_num]
 
     def movementTracker(self):
-        if track_steps():
-            self.global_steps += 100
-            print(self.name + " has walked " + self.global_steps)
-            print("----------------------------")
-            self.addHappiness(1)
+        while True:
+            if track_steps():
+                self.global_steps += 10
+                print(self.name + " has walked " + self.global_steps)
+                print("----------------------------")
+                self.addHappiness(1)
 
     def buttonListener(self):
         # Doesn't actually take any input, just prints the state of pet every 7 seconds.
