@@ -11,6 +11,7 @@ interval = .01
 
 bar1 = [4,5,6,16, 20]
 bar2 = [18, 23, 24, 13, 19]
+bar3 = [17, 27, 22, 21, 26]
 
 def initpins(pins):
     for x in pins:
@@ -62,6 +63,8 @@ def progress(bar, progress):
         
         # Shift on data
         for y in range(progress):
+
+            print(progress)
             IO.output(bar[0],1)            # clear the DATA pin, to send 0
             time.sleep(interval)            # wait for 100ms
             IO.output(bar[1],1)            # pull CLOCK pin high
@@ -77,6 +80,8 @@ def progress(bar, progress):
         time.sleep(interval)
         IO.output(bar[2],0)
     else:
+        
+
         for y in range(8):            # loop for counting up 8 times
             IO.output(bar[0],1)            # clear the DATA pin, to send 0
             time.sleep(interval)            # wait for 100ms
@@ -84,8 +89,6 @@ def progress(bar, progress):
             time.sleep(interval)
             IO.output(bar[1],0)            # pull CLOCK pin down, to send a rising edge
 
-        IO.output(bar[2],1)            # pull the SHIFT pin high to put the 8 bit data out parallel
-        
         if progress == 9:
             IO.output(bar[3],1)
             IO.output(bar[4],0)
@@ -93,19 +96,22 @@ def progress(bar, progress):
             IO.output(bar[3],1)
             IO.output(bar[4],1)
 
+        IO.output(bar[2],1)            # pull the SHIFT pin high to put the 8 bit data out parallel
         time.sleep(interval)
         IO.output(bar[2],0)
 
             
 initpins(bar1)
 initpins(bar2)
+initpins(bar3)
 
-for y in range(11):
-    progress(bar1, y)
-    #print(y)
-    time.sleep(.01)
-for y in range(10,-1,-1):
-    progress(bar1, y)
-    #print(y)
-    time.sleep(.01)
+# # progress(bar1, 9)
+# for y in range(11):
+#     progress(bar1, y)
+#     #print(y)
+#     time.sleep(1)
+# for y in range(10,-1,-1):
+#     progress(bar1, y)
+#     #print(y)
+#     time.sleep(1)
 
