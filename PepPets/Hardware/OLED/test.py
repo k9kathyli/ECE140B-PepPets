@@ -8,18 +8,18 @@ import subprocess
 from time import sleep
 import RPi.GPIO as GPIO
 
-from progress_bar import *
+# from progress_bar import *
 
 bar1 = [4,17,27,22, 10]
 bar2 = [9, 11, 5, 6, 13]
 bar3 = [14, 15, 18, 23, 24]
 
-initpins(bar1)
-initpins(bar2)
-initpins(bar3)
-clear(bar1)
-clear(bar2)
-clear(bar3)
+# initpins(bar1)
+# initpins(bar2)
+# initpins(bar3)
+# clear(bar1)
+# clear(bar2)
+# clear(bar3)
 leftArrow = 16
 middleSelect = 20
 rightArrow = 21
@@ -58,10 +58,10 @@ disp.display()
 width = disp.width
 height = disp.height
 # image = Image.new("1", (width, height))
-image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
-image = ImageOps.invert(image)
-image=image.convert('1')
-draw = ImageDraw.Draw(image)
+# image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+# image = ImageOps.invert(image)
+# image=image.convert('1')
+# draw = ImageDraw.Draw(image)
 # font = ImageFont.load("PepPets/Hardware/OLED/arial.pil")
 font = ImageFont.truetype("PepPets/Hardware/OLED/arial.ttf", 8)
 # First define some constants to allow easy resizing of shapes.
@@ -71,45 +71,65 @@ bottom = height-padding
 # Move left to right keeping track of the current x position for drawing shapes.
 x = 0
 
-pro1 = 0
-pro2 = 0
-pro3 = 0
-buttonpress = False
+# pro1 = 0
+# pro2 = 0
+# pro3 = 0
+# buttonpress = False
 
-def detect(buttonpress):
-    button1 = 0
-    button2 = 0
-    button3 = 0
+
+buttons = ["menu", "feed"]
+currentbutton = buttons[0]
+
+def button():
+    prin
+
+# def detect(buttonpress):
+#     button1 = 0
+#     button2 = 0
+#     button3 = 0
     
-    if GPIO.input(leftArrow) == GPIO.HIGH and buttonpress == False:
-        start = time.time()*1000
-        buttonpress = True
+#     if GPIO.input(leftArrow) == GPIO.HIGH and buttonpress == False:
+#         start = time.time()*1000
+#         buttonpress = True
     
-    elif GPIO.input(leftArrow) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
-        buttonpress = False
-        button1 = 1
+#     elif GPIO.input(leftArrow) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
+#         buttonpress = False
+#         button1 = 1
         
-    if GPIO.input(middleSelect) == GPIO.HIGH and buttonpress == False:
-        start = time.time()*1000
-        buttonpress = True
+#     if GPIO.input(middleSelect) == GPIO.HIGH and buttonpress == False:
+#         start = time.time()*1000
+#         buttonpress = True
     
-    elif GPIO.input(middleSelect) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
-        buttonpress = False
-        button2 = 1
+#     elif GPIO.input(middleSelect) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
+#         buttonpress = False
+#         button2 = 1
 
-    if GPIO.input(rightArrow) == GPIO.HIGH and buttonpress == False:
-        start = time.time()*1000
-        buttonpress = True
+#     if GPIO.input(rightArrow) == GPIO.HIGH and buttonpress == False:
+#         start = time.time()*1000
+#         buttonpress = True
     
-    elif GPIO.input(rightArrow) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
-        buttonpress = False
-        button3 = 1
+#     elif GPIO.input(rightArrow) == GPIO.LOW and buttonpress == False and time.time()*1000 > 200:
+#         buttonpress = False
+#         button3 = 1
 
-    inputreceive = (button1,button2,button3)
-    return inputreceive
+#     inputreceive = (button1,button2,button3)
+#     return inputreceive
+
+def facePage():
+    image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+    draw.line((x+12, top+33, x+36, top+33), fill=255)
+    draw.text((x+12, top+24), "MENU",  font=font, fill=255)
+    draw.text((x+52, top+24), "FEED",  font=font, fill=255)
+    draw.text((x+92, top+24), "LVL: 01",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
 
 while True:
-
+    facePage()
     # Find image in json
     # image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((width, height), Image.ANTIALIAS).convert('L')
     # inv_image = ImageOps.invert(image)
@@ -118,29 +138,38 @@ while True:
     # Display image.
     #disp.image(inv_image)
     # disp.text('Skater greater alligator', 0, 10, 0)
-    draw.rectangle((x+8, top+23, x+38, top+33), outline=255, fill=0)
-    draw.rectangle((x+48, top+23, x+78, top+33), outline=255, fill=0)
-    draw.rectangle((x+88, top+23, x+118, top+33), outline=255, fill=0)
-    draw.text((x+12, top+24), "MENU",  font=font, fill=255)
-    draw.text((x+52, top+24), "FEED",  font=font, fill=255)
-    draw.text((x+92, top+24), "XP:  01",  font=font, fill=255)
-    disp.image(image)
-    disp.display()
+    # draw.rectangle((x+8, top+23, x+38, top+33), outline=255, fill=0)
+    # draw.rectangle((x+48, top+23, x+78, top+33), outline=255, fill=0)
+    # draw.rectangle((x+88, top+23, x+118, top+33), outline=255, fill=0)
+    # draw.line((x+12, top+33, x+36, top+33), fill=255)
+    # draw.text((x+12, top+24), "MENU",  font=font, fill=255)
+    # draw.text((x+52, top+24), "FEED",  font=font, fill=255)
+    # draw.text((x+92, top+24), "LVL: 01",  font=font, fill=255)
 
-    buttoninput = detect(buttonpress)
-    pro1 += buttoninput[0]
-    pro2 += buttoninput[1]
-    pro3 += buttoninput[2]
-    if pro1 > 10:
-        pro1 -= 10
-    if pro2 > 10:
-        pro2 -= 10
-    if pro3 > 10:
-        pro3 -= 10
+    # draw.rectangle((x+8, top+8, x+38, top+18), outline=255, fill=0)
+    # draw.rectangle((x+8, top+22, x+38, top+32), outline=255, fill=0)
+    # draw.rectangle((x+8, top+36, x+46, top+33), outline=255, fill=0)
+    # draw.text((x+12, top+24), "MENU",  font=font, fill=255)
+    # draw.text((x+52, top+24), "FEED",  font=font, fill=255)
+    # draw.text((x+92, top+24), "LVL: 01",  font=font, fill=255)
 
-    progress(bar1,pro1)
-    progress(bar2,pro2)
-    progress(bar3,pro3)
+    # disp.image(image)
+    # disp.display()
+
+    # buttoninput = detect(buttonpress)
+    # pro1 += buttoninput[0]
+    # pro2 += buttoninput[1]
+    # pro3 += buttoninput[2]
+    # if pro1 > 10:
+    #     pro1 -= 10
+    # if pro2 > 10:
+    #     pro2 -= 10
+    # if pro3 > 10:
+    #     pro3 -= 10
+
+    # progress(bar1,pro1)
+    # progress(bar2,pro2)
+    # progress(bar3,pro3)
 
     # sleep(.1)
 

@@ -6,7 +6,7 @@ from threading import Thread
 
 from cv2 import add
 from Hardware.pedometer.steps import track_steps
-from Hardware.progressbar.progress_bar import *
+from Hardware.progressbar.progress_bar import progress, initpins, clear
 
 bar1 = [4,17,27,22, 10]
 bar2 = [9, 11, 5, 6, 13]
@@ -35,7 +35,7 @@ friend_foods = [Food("lollipop", 0, 1, 30),
 class PepPet:
     # Metrics
     happiness = 0
-    hunger = 0
+    hunger = 10
     experience = 0
     level = 0
     face = "depressed"
@@ -77,18 +77,18 @@ class PepPet:
         if self.experience >= 100:
             self.level += 1
             self.experience = self.experience - 100
-            self.levelUp()
+            # self.levelUp()
 
-    def levelUp(self):
-        print(self.name + " leveled up to level " + self.level)
-        print("----------------------------")
+    # def levelUp(self):
+    #     print(self.name + " leveled up to level " + self.level)
+    #     print("----------------------------")
 
-        match self.level:
-            case 1:
-                self.closet.append("sunglasses")
-            case 2:
-                # TODO: do rest of this
-                return
+    #     match self.level:
+    #         case 1:
+    #             self.closet.append("sunglasses")
+    #         case 2:
+    #             # TODO: do rest of this
+    #             return
 
     def addHunger(self, value):
         self.hunger += value
@@ -132,9 +132,13 @@ class PepPet:
         print("Foods: " + str(self.foods))
         print("----------------------------")
 
-        progress(bar1, self.hunger)
-        progress(bar2, self.happiness)
-        progress(bar3, int(self.experience/10))
+    def showPetbar(self):  
+        while True:
+            progress(bar3, self.hunger)
+            progress(bar2, self.happiness)
+            progress(bar1, int(self.experience/10))
+            time.sleep(.5)
+
 
     """
     Functions to randomly fluctuate hunger/happiness over the course of the day
@@ -208,7 +212,7 @@ class PepPet:
                 self.global_steps += 10
                 print(self.name + " has walked " + str(self.global_steps))
                 self.addHappiness(1)
-            if self.global_step % 50 == 0:
+            if self.global_steps % 20 == 0:
                 # Every 50 steps hunger goes down 1 and there is a chance to pick up a random food!
                 self.addHunger(-1)
                 # Pick a random food (foods have different weights)
@@ -216,7 +220,7 @@ class PepPet:
                     walking_foods, weights=walking_food_weights, k=1)[0]
                 if found_food != "nothing":
                     print(self.name + " found " +
-                          found_food.name + "while walking!")
+                          found_food.name + " while walking!")
                     self.collectFood(found_food)
                 else:
                     print("Did not find anything")
@@ -252,11 +256,13 @@ hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
 buttonControl = Thread(target=myPet.buttonListener)
+progressbar = Thread(target=myPet.showPetbar)
 # Start hunger and happiness fluctuators
 # hungerLoss.start()
 # happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
+progressbar.start()
 # # # myPet.hungerControl()
 # myPet.collectFood(steak)
 # myPet.collectFood(steak)

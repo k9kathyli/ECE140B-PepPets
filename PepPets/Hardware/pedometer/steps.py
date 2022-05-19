@@ -42,7 +42,6 @@ def read_raw_data(addr):
 
 
 def track_steps():
-    print("Here")
     MPU_Init()
     steps = 0
     previous_vector = 0

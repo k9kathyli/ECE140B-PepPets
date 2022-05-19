@@ -16,7 +16,6 @@ bar3 = [14, 15, 18, 23, 24]
 def initpins(pins):
     for x in pins:
         IO.setup(x,IO.OUT)
-    IO.cleanp()
 
 def clear(bar):
     for y in range(8):            # loop for counting up 8 times
@@ -53,6 +52,9 @@ def allon(bar):
 # bar - array of the pins for the LED display
 # progress - number from 1 - 10 for number of leds
 def progress(bar, progress):
+    # IO.setmode (IO.BCM)
+    # for x in bar:
+    #     IO.setup(x,IO.OUT)
     if progress <= 8:
         # Shift off data
         for y in range(8-progress):
@@ -98,15 +100,15 @@ def progress(bar, progress):
         IO.output(bar[2],1)            # pull the SHIFT pin high to put the 8 bit data out parallel
         time.sleep(interval)
         IO.output(bar[2],0)
+    # IO.cleanup()
 
             
-# initpins(bar1)
-# initpins(bar2)
-# initpins(bar3)
-# clear(bar1)
-# clear(bar2)
-# clear(bar3)
-
+initpins(bar1)
+initpins(bar2)
+initpins(bar3)
+clear(bar1)
+clear(bar2)
+clear(bar3)
 
 # for y in range(11):
 #     progress(bar1, y)
@@ -120,4 +122,6 @@ def progress(bar, progress):
 #     progress(bar3, y)
 #     print(y)
 #     time.sleep(.5)
+
+# IO.cleanup()
 
