@@ -6,7 +6,11 @@ from threading import Thread
 
 from cv2 import add
 from Hardware.pedometer.steps import track_steps
+from Hardware.progressbar.progress_bar import *
 
+bar1 = [4,17,27,22, 10]
+bar2 = [9, 11, 5, 6, 13]
+bar3 = [14, 15, 18, 23, 24]
 
 class Food:
     def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
@@ -128,6 +132,10 @@ class PepPet:
         print("Foods: " + str(self.foods))
         print("----------------------------")
 
+        progress(bar1, self.hunger)
+        progress(bar2, self.happiness)
+        progress(bar3, self.experience/10)
+
     """
     Functions to randomly fluctuate hunger/happiness over the course of the day
     The current naive implementation is to randomly decide to decrease hunger every 5 seconds.
@@ -228,7 +236,9 @@ Thread 2: Happiness control: Fluctuates happiness over time
 Thread 3: Pedometer/Step counter: Keeps track of steps and changes metrics depending on that
 Thread 4: Button listener: Handles user input (feeding, customization, etc)
 '''
-
+initpins(bar1)
+initpins(bar2)
+initpins(bar3)
 myPet = PepPet("Chonk")
 # myPet.showPet()
 # steak = Food("Steak", 3, 1, 30)

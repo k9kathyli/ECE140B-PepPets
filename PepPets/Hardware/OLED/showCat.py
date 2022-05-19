@@ -25,13 +25,13 @@ height = disp.height
 image = Image.new("1", (width, height))
 
 # Open json
-with open('Hardware/OLED/emote.json') as json_file:
+with open('PepPets/Hardware/OLED/emote.json') as json_file:
     json_data = json.load(json_file)
 
 index = 0
 while True:
     # Find image in json
-    image = Image.open('Hardware/OLED/' + json_data[index % len(json_data)]['path']).resize((width, height), Image.ANTIALIAS).convert('L')
+    image = Image.open('PepPets/Hardware/OLED/' + json_data[index % len(json_data)]['path']).resize((width, height), Image.ANTIALIAS).convert('L')
     inv_image = ImageOps.invert(image)
     inv_image=inv_image.convert('1')
 
