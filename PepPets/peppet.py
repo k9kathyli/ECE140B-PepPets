@@ -134,7 +134,7 @@ class PepPet:
 
         progress(bar1, self.hunger)
         progress(bar2, self.happiness)
-        progress(bar3, self.experience/10)
+        progress(bar3, int(self.experience/10))
 
     """
     Functions to randomly fluctuate hunger/happiness over the course of the day
@@ -239,6 +239,9 @@ Thread 4: Button listener: Handles user input (feeding, customization, etc)
 initpins(bar1)
 initpins(bar2)
 initpins(bar3)
+clear(bar1)
+clear(bar2)
+clear(bar3)
 myPet = PepPet("Chonk")
 # myPet.showPet()
 # steak = Food("Steak", 3, 1, 30)

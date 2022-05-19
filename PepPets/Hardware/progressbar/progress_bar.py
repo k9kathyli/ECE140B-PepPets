@@ -16,6 +16,7 @@ bar3 = [14, 15, 18, 23, 24]
 def initpins(pins):
     for x in pins:
         IO.setup(x,IO.OUT)
+    IO.cleanp()
 
 def clear(bar):
     for y in range(8):            # loop for counting up 8 times
@@ -85,7 +86,7 @@ def progress(bar, progress):
             time.sleep(interval)            # wait for 100ms
             IO.output(bar[1],1)            # pull CLOCK pin high
             time.sleep(interval)
-            IO.output(bar[1],0)            # pull CLOCK pin down, to send a rising edge
+            IO.output(bar[1],0)            # pull CLOCK pin down, to send a rising edge[13,19,26,5,6]
 
         if progress == 9:
             IO.output(bar[3],1)
@@ -99,21 +100,24 @@ def progress(bar, progress):
         IO.output(bar[2],0)
 
             
-initpins(bar1)
-initpins(bar2)
-initpins(bar3)
+# initpins(bar1)
+# initpins(bar2)
+# initpins(bar3)
+# clear(bar1)
+# clear(bar2)
+# clear(bar3)
 
-progress(bar1, 9)
-for y in range(11):
-    progress(bar1, y)
-    progress(bar2, y)
-    progress(bar3, y)
-    print(y)
-    time.sleep(.5)
-for y in range(10,-1,-1):
-    progress(bar1, y)
-    progress(bar2, y)
-    progress(bar3, y)
-    print(y)
-    time.sleep(.5)
+
+# for y in range(11):
+#     progress(bar1, y)
+#     progress(bar2, y)
+#     progress(bar3, y)
+#     print(y)
+#     time.sleep(.5)
+# for y in range(10,-1,-1):
+#     progress(bar1, y)
+#     progress(bar2, y)
+#     progress(bar3, y)
+#     print(y)
+#     time.sleep(.5)
 

@@ -17,6 +17,8 @@ def initpins(pins):
     for x in pins:
         IO.setup(x,IO.OUT)
 
+    IO.cleanp()
+
 def clear(bar):
     for y in range(8):            # loop for counting up 8 times
         IO.output(bar[0],0)            # clear the DATA pin, to send 0
@@ -99,21 +101,22 @@ def progress(bar, progress):
         IO.output(bar[2],0)
 
             
-initpins(bar1)
-initpins(bar2)
-initpins(bar3)
+# initpins(bar1)
+# initpins(bar2)
+# initpins(bar3)
 
-progress(bar1, 9)
-for y in range(11):
-    progress(bar1, y)
-    progress(bar2, y)
-    progress(bar3, y)
-    print(y)
-    time.sleep(.5)
-for y in range(10,-1,-1):
-    progress(bar1, y)
-    progress(bar2, y)
-    progress(bar3, y)
-    print(y)
-    time.sleep(.5)
+
+# progress(bar1, 9)
+# for y in range(11):
+#     progress(bar1, y)
+#     progress(bar2, y)
+#     progress(bar3, y)
+#     print(y)
+#     time.sleep(.5)
+# for y in range(10,-1,-1):
+#     progress(bar1, y)
+#     progress(bar2, y)
+#     progress(bar3, y)
+#     print(y)
+#     time.sleep(.5)
 
