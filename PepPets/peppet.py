@@ -1,7 +1,10 @@
+from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
 import time
 import random
 from concurrent.futures import thread
 from threading import Thread
+
+from cv2 import add
 from Hardware.pedometer.steps import track_steps
 
 
@@ -13,10 +16,16 @@ class Food:
         self.exp = exp
 
 
-edibles = [Food("chicken", 1),
-           Food("steak", 3, 0, 5),
-           Food("fish", 1, 1, 5),
-           Food("pineapple", 2, 1, 10)]
+walking_foods = ["nothing",
+                 Food("steak", 3, 0, 5),
+                 Food("fish", 1, 1, 5),
+                 Food("pineapple", 1, 1, 10),
+                 Food("cake", 1, 3, 15),
+                 Food("bread", 2, 0, 15)]
+walking_food_weights = [100, 60, 20, 15, 10, 10]
+
+friend_foods = [Food("lollipop", 0, 1, 30),
+                Food("boba", 1, 2, 15)]
 
 
 class PepPet:
@@ -41,7 +50,7 @@ class PepPet:
 
     """
     Feed your Pep Pet a food. Will adjust the Pet's happiness, hunger, and exp depending on the food stats
-    Arguments: 
+    Arguments:
         - food : a Food object
     """
 
@@ -64,8 +73,18 @@ class PepPet:
         if self.experience >= 100:
             self.level += 1
             self.experience = self.experience - 100
-            print(self.name + " leveled up!")
-            print("----------------------------")
+            self.levelUp()
+
+    def levelUp(self):
+        print(self.name + " leveled up to level " + self.level)
+        print("----------------------------")
+
+        match self.level:
+            case 1:
+                self.closet.append("sunglasses")
+            case 2:
+                # TODO: do rest of this
+                return
 
     def addHunger(self, value):
         self.hunger += value
@@ -89,7 +108,7 @@ class PepPet:
 
     """
     Add a Food item to the Pep Pet's inventory.
-    Arguments: 
+    Arguments:
         - food : a Food object
     """
 
@@ -110,7 +129,7 @@ class PepPet:
         print("----------------------------")
 
     """
-    Functions to randomly fluctuate hunger/happiness over the course of the day 
+    Functions to randomly fluctuate hunger/happiness over the course of the day
     The current naive implementation is to randomly decide to decrease hunger every 5 seconds.
     In the real device it should take much longer (every 5 minutes, every hour maybe)
     """
@@ -130,20 +149,43 @@ class PepPet:
             if random_int > 5:
                 print("Decrease happiness now")
                 print("----------------------------")
-
                 self.addHappiness(-1)
-                myPet.showPet()
 
-    # Calculate the Pet's mood according the hunger and happiness
+    '''
+    Connect with another Pep Pet
+    Arguments:
+    - friend: A String representing the name of the Pep Pet being connected with. 
+    It will get added to our Pet's friend list. Depending on if we have already met them or not,
+    our Pet will gain a certain amount of experience and happiness. 
+    '''
+
+    def connectWithFriend(self, friend):
+        if friend not in self.friends:
+            self.friends.append(friend)
+            print(self.name + "made a new friend: " + friend)
+            self.addHappiness(5)
+            self.addExperience(30)
+            self.collectFood(friend_foods[0])
+        else:
+            print("It's nice to meet " + friend + "again!")
+            self.addHappiness(3)
+            self.addExperience(15)
+            self.collectFood(friend_foods[1])
+
+        print("----------------------------")
+
+    '''
+    Calculate the Pet's mood according the hunger and happiness
+    Logic: If hunger < 3, mood defaults to "hungry"
+           If happiness < 3, mood defaults to one of "depressed", "sad", "bored", "unhappy"
+            Otherwise, take the average of the 2 metrics and assign mood based on that. (index of moods list)
+    '''
 
     def setMood(self):
         # Will have to associate with right picture in hardware
         moods = ["excited", "happy", "fine", "mischievious", "neutral",
                  "bored", "confused", "sad", "angry", "crying", "sick"]
 
-        # Logic: If hunger < 3, mood defaults to "hungry"
-        #        If happiness < 3, mood defaults to one of "depressed", "sad", "bored", "unhappy"
-        #        Otherwise, take the average of the 2 metrics and assign mood based on that. (index of moods list)
         if self.hunger < 3:
             self.face = "hungry"
         if self.happiness < 3:
@@ -157,11 +199,23 @@ class PepPet:
             if track_steps():
                 self.global_steps += 10
                 print(self.name + " has walked " + str(self.global_steps))
-                print("----------------------------")
                 self.addHappiness(1)
+            if self.global_step % 50 == 0:
+                # Every 50 steps hunger goes down 1 and there is a chance to pick up a random food!
+                self.addHunger(-1)
+                # Pick a random food (foods have different weights)
+                found_food = random.choices(
+                    walking_foods, weights=walking_food_weights, k=1)[0]
+                if found_food != "nothing":
+                    print(self.name + " found " +
+                          found_food.name + "while walking!")
+                    self.collectFood(found_food)
+                else:
+                    print("Did not find anything")
+            print("----------------------------")
 
     def buttonListener(self):
-        # Doesn't actually take any input, just prints the state of pet every 7 seconds.
+        # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while True:
             self.showPet()
 
