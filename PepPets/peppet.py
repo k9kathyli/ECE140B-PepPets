@@ -4,6 +4,7 @@ import random
 from concurrent.futures import thread
 from threading import Thread
 
+import EmailParent
 from cv2 import add
 from Hardware.pedometer.steps import track_steps
 from Hardware.progressbar.progress_bar import progress, initpins, clear
@@ -42,6 +43,7 @@ class PepPet:
     # Info
     name = "Pep Pet 1"
     global_steps = 0
+    petID="999555"
 
     closet = []
     # Dictionary of food name values mapped to the quantity of that food
@@ -178,6 +180,7 @@ class PepPet:
             self.addHappiness(5)
             self.addExperience(30)
             self.collectFood(friend_foods[0])
+            EmailParent.sendEmail(self.petID)
         else:
             print("It's nice to meet " + friend + "again!")
             self.addHappiness(3)
