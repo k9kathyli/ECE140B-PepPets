@@ -7,6 +7,7 @@ from threading import Thread
 from cv2 import add
 from Hardware.pedometer.steps import track_steps
 from Hardware.progressbar.progress_bar import progress, initpins, clear
+import Hardware.button.press as button
 
 bar1 = [4,17,27,22, 10]
 bar2 = [9, 11, 5, 6, 13]
@@ -137,7 +138,7 @@ class PepPet:
             progress(bar3, self.hunger)
             progress(bar2, self.happiness)
             progress(bar1, int(self.experience/10))
-            time.sleep(.5)
+            time.sleep(.1)
 
 
     """
@@ -228,10 +229,13 @@ class PepPet:
 
     def buttonListener(self):
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
+        button.setup()
         while True:
-            self.showPet()
+            #self.showPet()
 
-            time.sleep(7)
+            # button.detect() = (left, select, right)
+
+            time.sleep(0.1)
 
 
 '''
