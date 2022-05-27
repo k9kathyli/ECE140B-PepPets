@@ -76,7 +76,7 @@ if __name__ == "__main__":
     st = TaskFactory("sustain")
 
     wt.printTask()
-    wt.addProgress(69)
+    wt.addProgress()
     wt.printTask()
     # ft.printTask()
     # ct.printTask()
