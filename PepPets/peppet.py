@@ -1,5 +1,5 @@
 from asyncio import Task
-import time
+import time as timer
 import random
 from threading import Thread
 from datetime import datetime, time
@@ -45,6 +45,7 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
+    unique_id = 0
     global_steps = 0
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
@@ -54,8 +55,10 @@ class PepPet:
     friends = []
 
     # Construct a Pep Pet with a name
-    def __init__(self, name):
+    def __init__(self, name, id):
+        self.unique_id = id
         self.name = name
+        self.resetTasks()
 
 
     def resetTasks(self):
@@ -97,14 +100,14 @@ class PepPet:
         print(self.name + " leveled up to level " + self.level)
         print("----------------------------")
 
-        match self.level:
-            case 1:
-                self.closet.append("sunglasses")
-            case 2:
-                self.closet.append("eyepatch")
-                # TODO: do rest of this
-            case _: 
-                return
+        # match self.level:
+        #     case 1:
+        #         self.closet.append("sunglasses")
+        #     case 2:
+        #         self.closet.append("eyepatch")
+        #         # TODO: do rest of this
+        #     case _: 
+        #         return
 
 
     def addHunger(self, value):
@@ -147,7 +150,7 @@ class PepPet:
 
     def hungerControl(self):
         while not NIGHT:
-            time.sleep(10)
+            timer.sleep(10)
             random_int = random.randint(0, 9)
             if random_int < 5:
                 print("Fluctuate hunger now")
@@ -155,7 +158,7 @@ class PepPet:
 
     def happinessControl(self):
         while not NIGHT:
-            time.sleep(10)
+            timer.sleep(10)
             random_int = random.randint(0, 9)
             if random_int > 5:
                 print("Decrease happiness now")
@@ -238,14 +241,14 @@ class PepPet:
             progress(bar3, self.hunger)
             progress(bar2, self.happiness)
             progress(bar1, int(self.experience/10))
-            time.sleep(.5)
+            timer.sleep(.5)
 
     def buttonListener(self):
         
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while not NIGHT:
             self.showPet()
-            time.sleep(7)
+            timer.sleep(7)
 
     def showPet(self):
         print("Name: " + self.name)
@@ -255,7 +258,8 @@ class PepPet:
         print("    Level:  " + str(self.level))
         print("    Experience: " + str(self.experience))
         print("Foods: " + str(self.foods))
-        for task in self.tasks.values:
+        # print(self.tasks)
+        for task in self.tasks.values():
             if task != None:
                 task.printTask()
         print("----------------------------")
@@ -274,9 +278,10 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk")
+myPet = PepPet("Chonk", 123456)
+TwoPet = PepPet("Chonk2", 123457)
 # myPet.showPet()
-# steak = Food("Steak", 3, 1, 30)
+steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
 
 
@@ -285,7 +290,9 @@ happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
 buttonControl = Thread(target=myPet.buttonListener)
 progressBar = Thread(target=myPet.showPetbar)
-PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar]
+# progressBar2 = Thread(target=myPet.showPetbar)
+
+PepPetThreads = [movementTrack, buttonControl, progressBar]
 
 
 # Start hunger and happiness fluctuators
@@ -295,25 +302,39 @@ movementTrack.start()
 buttonControl.start()
 progressBar.start()
 
+myPet.collectFood(steak)
+myPet.collectFood(steak)
 while True:
     now = datetime.now()
     now_time = now.time()
-    if now_time >= time(23,00) or now_time <= time(8,00):
+    if now_time >= time(13,13) and now_time <= time(13,14):
+        print(now_time)
         print ("It's night")
         NIGHT = True
     else:
         print("It's day")
         if NIGHT: 
-            # We just woke up and should reset our tasks
+            NIGHT = False
+
+            # We just woke up and should reset our tasks and restart our threads
             myPet.resetTasks()
+            hungerLoss = Thread(target=myPet.hungerControl)
+            happinessLoss = Thread(target=myPet.happinessControl)
+            movementTrack = Thread(target=myPet.movementTracker)
+            buttonControl = Thread(target=myPet.buttonListener)
+            progressBar = Thread(target=myPet.showPetbar)
+            # PepPetThreads = [movementTrack, buttonControl, progressBar]
+            movementTrack.start()
+            buttonControl.start()
+            progressBar.start()
         NIGHT = False
+    
     #Wait an hour before checking again
-    time.sleep(3600)
+    timer.sleep(10)
 
 
 # # # myPet.hungerControl()
-# myPet.collectFood(steak)
-# myPet.collectFood(steak)
+# 
 
 # myPet.showPet()
 # myPet.feed(steak)

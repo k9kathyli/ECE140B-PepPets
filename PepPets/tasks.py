@@ -57,6 +57,8 @@ class SustainHappinessTask:
         self.threshold = random.choice(HAPPINESS_THRESHOLDS)
     def printTask(self):
         print("     - Keep your pet above " + str(self.threshold) + " happiness until bedtime.")
+# class CustomTask:
+    
 
 def TaskFactory(task_type):
     tasks = {
@@ -76,7 +78,7 @@ if __name__ == "__main__":
     st = TaskFactory("sustain")
 
     wt.printTask()
-    wt.addProgress(69)
+    wt.addProgress()
     wt.printTask()
     # ft.printTask()
     # ct.printTask()
