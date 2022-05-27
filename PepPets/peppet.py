@@ -45,6 +45,7 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
+    unique_id = 0
     global_steps = 0
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
@@ -54,7 +55,8 @@ class PepPet:
     friends = []
 
     # Construct a Pep Pet with a name
-    def __init__(self, name):
+    def __init__(self, name, id):
+        self.unique_id = id
         self.name = name
         self.resetTasks()
 
@@ -276,7 +278,8 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk")
+myPet = PepPet("Chonk", 123456)
+TwoPet = PepPet("Chonk2", 123457)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
