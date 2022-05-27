@@ -46,7 +46,6 @@ class PepPet:
     # Info
     name = "Pep Pet 1"
     global_steps = 0
-    petID="999555"
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
     closet = []

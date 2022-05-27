@@ -50,8 +50,7 @@ def track_steps():
         acc_x = read_raw_data(ACCEL_XOUT_H)
         acc_y = read_raw_data(ACCEL_YOUT_H)
         acc_z = read_raw_data(ACCEL_ZOUT_H)
-        current_vector = math.sqrt(
-            pow(acc_x, 2) + pow(acc_y, 2) + pow(acc_z, 2))
+        current_vector = math.sqrt(pow(acc_x, 2) + pow(acc_y, 2) + pow(acc_z, 2))
 
         # print(current_vector)
         # print ("Ax=%.2f" %acc_x, "\tAy=%.2f" %acc_y, "\tAz=%.2f" %acc_z)
