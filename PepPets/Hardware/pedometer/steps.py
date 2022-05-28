@@ -54,7 +54,7 @@ def track_steps():
 
         # print(current_vector)
         # print ("Ax=%.2f" %acc_x, "\tAy=%.2f" %acc_y, "\tAz=%.2f" %acc_z)
-        print(steps)
+        # print(steps)
         # Step threshold
         steps += 1 if (current_vector - previous_vector) > 0.15 else 0
 

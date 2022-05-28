@@ -65,6 +65,13 @@ class PepPet:
         types = random.sample(task_types, 3)
         for task_type in types:
             self.tasks[task_type] = TaskFactory(task_type)
+    
+    def rewardTask(self, task):
+
+        if  task.done and not task.rewarded:
+            task.setRewarded()
+            self.addExperience(task.getReward())
+            print("%s finished a task! You earned %i XP." % (self.name, task.getReward()))
 
     """
     Feed your Pep Pet a food. Will adjust the Pet's happiness, hunger, and exp depending on the food stats
@@ -84,8 +91,12 @@ class PepPet:
         self.foods[food.name] -= 1
         self.setMood()
 
-        if self.tasks["feed"] != None:
-            self.tasks["feed"].addProgress(1)
+        # Update feeding task if it exists
+        feed_task = self.tasks["feed"]
+        if feed_task != None:
+            feed_task.addProgress(1)
+            self.rewardTask(feed_task)
+    
 
     def addExperience(self, value):
         # Check if the Pep Pet can level up and do so if necessary
@@ -132,6 +143,7 @@ class PepPet:
         if sustain_task != None: 
             if self.happiness < sustain_task.threshold:
                 sustain_task.failTask()
+
             
 
     """
@@ -220,8 +232,6 @@ class PepPet:
         while not NIGHT:
             if track_steps():
                 self.global_steps += 10
-                if self.tasks["walk"] != None:
-                    self.tasks["walk"].addProgress(10)
                 print(self.name + " has walked " + str(self.global_steps))
 
                 # Only get happier on a full stomach. Walking while hungry lowers happiness
@@ -241,6 +251,12 @@ class PepPet:
                     self.collectFood(found_food)
                 else:
                     print("Did not find anything")
+
+            walk_task = self.tasks["walk"]
+            if walk_task != None:
+                walk_task.addProgress(10)
+                self.rewardTask(walk_task)
+
             print("----------------------------")
 
     def showPetbar(self):  
