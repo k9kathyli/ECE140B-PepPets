@@ -15,14 +15,12 @@ bar3 = [14, 15, 18, 23, 24]
 
 NIGHT = False
 
-
 class Food:
     def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
         self.name = name
         self.hunger_gain = hunger
         self.happiness_gain = happiness
         self.exp = exp
-
 
 WALKING_FOODS = ["nothing",
                  Food("steak", 3, 0, 5),
@@ -85,6 +83,7 @@ class PepPet:
         self.addExperience(food.exp)
         self.foods[food.name] -= 1
         self.setMood()
+
         if self.tasks["feed"] != None:
             self.tasks["feed"].addProgress(1)
 
@@ -128,6 +127,12 @@ class PepPet:
             self.happiness = 10
         if self.happiness < 0:
             self.happiness = 0
+
+        sustain_task = self.tasks["sustain"]
+        if sustain_task != None: 
+            if self.happiness < sustain_task.threshold:
+                sustain_task.failTask()
+            
 
     """
     Add a Food item to the Pep Pet's inventory.
@@ -187,6 +192,8 @@ class PepPet:
             self.addExperience(15)
             self.collectFood(FRIEND_FOODS[1])
 
+        if self.tasks["connect"] != None:
+            self.tasks["connect"].setDone()
         print("----------------------------")
 
     '''
