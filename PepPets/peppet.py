@@ -239,8 +239,13 @@ class PepPet:
                     self.addHappiness(-1)
                 else:
                     self.addHappiness(1)
-            if self.global_steps % 20 == 0:
-                # Every 50 steps hunger goes down 1 and there is a chance to pick up a random food!
+            # Every 150 steps the Pet gains 1 EXP
+            if self.global_steps % 150 == 0:
+                self.addExperience(1)
+
+            
+            if self.global_steps % 25 == 0:
+                # Every 25 steps hunger goes down 1 and there is a chance to pick up a random food!
                 self.addHunger(-1)
                 # Pick a random food (foods have different weights)
                 found_food = random.choices(
@@ -256,7 +261,7 @@ class PepPet:
             if walk_task != None:
                 walk_task.addProgress(10)
                 self.rewardTask(walk_task)
-
+            self.setMood()
             print("----------------------------")
 
     def showPetbar(self):  
@@ -338,7 +343,8 @@ while True:
         print("It's day")
         if NIGHT: 
             NIGHT = False
-
+            # The Pet passively gains 5 exp every day
+            myPet.addExperience(5)
             # We just woke up and should reset our tasks and restart our threads
             myPet.resetTasks()
             hungerLoss = Thread(target=myPet.hungerControl)
