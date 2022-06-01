@@ -1,20 +1,54 @@
+#!/usr/bin/env python
 from asyncio import Task
-import time as timer
-import random
-from threading import Thread
 from datetime import datetime, time
+import mysql.connector as mysql
+import random
+import time as timer
+from threading import Thread
+import serial
 
 import EmailParent
 from Hardware.pedometer.steps import track_steps
 from Hardware.progressbar.progress_bar import progress, initpins, clear
 from tasks import TaskFactory
 
+'''
+IMPORTANT: For the MVP, one Pep Pet runs receiver_peppet.py and completely disregards sender_peppet.py
+The receiver Pep Pet continously listens for messages on a serial port. Once a sender Pet writes their message
+(their own ID), the receiver Pet will read it, write to the database that they've made friends with the sender, 
+and that the sender made friends with them. 
+'''
+
+# ---------------- Database credential variables ----------------------
+HOST = "db-mysql-sfo2-96686-do-user-11317347-0.b.db.ondigitalocean.com"
+DATABASE = "peppetEMAIL"
+PORT = 25060
+USER = "doadmin"
+PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
+db = mysql.connect(host=HOST, database=DATABASE,
+                       user=USER, password=PASSWORD, port=PORT)
+cursor = db.cursor()
+print("connected to: ", db.get_server_info())
+
+# ---------------- Serial Port Info -----------------------------------
+ser = serial.Serial(
+        port='/dev/ttyAM0', #Replace ttyS0 with ttyAM0 for Pi1,Pi2,Pi0
+        baudrate = 9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=1
+)
+
+# ---------------- 10 Segment LED Info --------------------------------
 bar1 = [4,17,27,22, 10]
 bar2 = [9, 11, 5, 6, 13]
 bar3 = [14, 15, 18, 23, 24]
 
+# ---------------- Global Day/Night Tracker---------------------------
 NIGHT = False
 
+# ---------------- Global Food and Weights----------------------------
 class Food:
     def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
         self.name = name
@@ -33,7 +67,7 @@ WALKING_FOOD_WEIGHTS = [100, 60, 20, 15, 10, 10]
 FRIEND_FOODS = [Food("lollipop", 0, 1, 30),
                 Food("boba", 1, 2, 15)]
 
-
+# ---------------- Main Pep Pet Class -------------------------------
 class PepPet:
     # Metrics
     happiness = 0
@@ -43,7 +77,7 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
-    unique_id = 0
+    unique_id = 1
     global_steps = 0
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
@@ -82,7 +116,6 @@ class PepPet:
         self.addHunger(food.hunger_gain)
         self.addExperience(food.exp)
         self.foods[food.name] -= 1
-        self.setMood()
 
         if self.tasks["feed"] != None:
             self.tasks["feed"].addProgress(1)
@@ -118,6 +151,8 @@ class PepPet:
             # Overfeeding makes the Pet unhappy.
             self.addHappiness(-1)
             print("You overfed " + self.name)
+        self.setMood()
+
         print("----------------------------")
 
     def addHappiness(self, value):
@@ -127,6 +162,7 @@ class PepPet:
             self.happiness = 10
         if self.happiness < 0:
             self.happiness = 0
+        self.setMood()
 
         sustain_task = self.tasks["sustain"]
         if sustain_task != None: 
@@ -251,7 +287,6 @@ class PepPet:
             timer.sleep(.5)
 
     def buttonListener(self):
-        
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while not NIGHT:
             self.showPet()
@@ -270,7 +305,14 @@ class PepPet:
             if task != None:
                 task.printTask()
         print("----------------------------")
+    
 
+    def receiveMessage(self):
+        while not NIGHT:
+            x=ser.readline()
+            if x == "Chonk":
+                self.connectWithFriend(x)
+        # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans   
 
 '''
 Thread 1: Hunger control: Fluctuates hunger over time
@@ -278,6 +320,7 @@ Thread 2: Happiness control: Fluctuates happiness over time
 Thread 3: Pedometer/Step counter: Keeps track of steps and changes metrics depending on that
 Thread 4: Button listener: Handles user input (feeding, customization, etc)
 Thread 5: Bar Control: Displays metric changes on the actual Pep Pet
+Thread 6: Listen for data on serial port continuously for friend connections
 '''
 initpins(bar1)
 initpins(bar2)
@@ -285,8 +328,7 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk", 123456)
-TwoPet = PepPet("Chonk2", 123457)
+myPet = PepPet("Beans", 123456)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
