@@ -1,0 +1,82 @@
+
+:root{
+  --smallpad:0.5rem;
+  --mediumpad:1rem;
+  --miderpad: 1.5rem;
+  --largepad:2.8rem;
+  --xlpad:3rem;
+    
+  --shortTransi:0.6;
+  --hdersize:1.5rem;
+  --mainfont: Lucida Console;
+
+  --textcolor:white;
+	--backgroundcolor: hsl(240, 0%, 20%);
+	--maincolor:hsl(36, 70%, 70%);
+  --darker_maincolor:hsl(36, 70%, 50%);
+  }
+
+
+body{
+    background-image: url(images/meow.png);
+    /* background-position: center; */
+    background-size: cover;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: var(--largepad);
+    background-attachment: fixed;
+    color:white;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+
+}
+input[type=text]{
+    font-size: 1.5rem;
+    height: var(--miderpad);
+    padding: var(--smallpad);
+}
+
+input[type=text]:focus{
+    border: 2px var(--darker_maincolor)
+}
+.title{
+    margin-top:var(--miderpad) ;
+    text-align: center;
+}
+.login{
+    text-align: center;
+    padding: var(--miderpad);
+}
+button{
+    color:white;
+    font-size: var(--midpad);
+    transition-duration: var(--shortTransi);
+    font-family: var(--mainfont);
+    border-radius: var(--mediumpad);
+    background-color: var(--maincolor);
+    padding: var(--smallpad);
+    cursor: pointer;
+    text-decoration: none;
+  }
+button:hover{
+    background-color: var(--darker_maincolor);
+    
+}
+select{
+  width: 100%;
+  min-width: 15ch;
+  max-width: 30ch;
+  border: 1px solid var(--select-border);
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1.1;
+  background-color: #fff;
+  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+
+}
+@media only screen and (max-device-width:700px) {
+  body{
+    background-image: url('images/mobile_meow.png');
+  }
+}
