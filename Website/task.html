@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> Pep Pets </title>
+
+    
+    <link rel="stylesheet" type="text/css" href="public/style.css">
+   
+  </head>
+
+  <body id ="body">
+    <div class="title"> Welcome Back!</div>
+    <p class="title">Enter Custom tasks for your child's Pet </p>
+    <div class ="login">
+        Task: <input type="text" id="task"><br>
+        <label for="rewards">Choose reward:</label>
+        <select name="foods" id ="foods">
+            <option>steak</option>
+            <option>fish</option>
+            <option>pineapple</option>
+            <option>bread</option>
+        </select><br><br>
+        
+        <Button  onclick ="sent()"type="submit">Submit</Button>
+
+      
+
+
+    </div>
+    <div class="login">
+      <p  id="msg"class="title"> </p>
+    </div>
+    <script src="public/script.js"></script>
+
+  </body>
+</html>
