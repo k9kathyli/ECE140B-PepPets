@@ -13,17 +13,19 @@
     <div class="title"> Welcome Back!</div>
     <p class="title">Enter Custom tasks for your child's Pet </p>
     <div class ="login">
-        Task: <input type="text" id="task"><br>
-        <label for="rewards">Choose reward:</label>
-        <select name="foods" id ="foods">
-            <option>steak</option>
-            <option>fish</option>
-            <option>pineapple</option>
-            <option>bread</option>
-        </select><br><br>
-        
-        <Button  onclick ="sent()"type="submit">Submit</Button>
-
+      ID: <input type="text" id="petid">
+      Task: <input type="text" id="task"><br>
+      <label for="rewards">Choose reward:</label>
+      <select id ="foods">
+          <option value="steak">steak</option>
+          <option value="fish">fish</option>
+          <option value="pineapple">pineapple</option>
+          <option value="bread">bread</option>
+      </select><br><br>
+      
+      <Button  onclick ="sent()">Submit</Button>
+      <p class="title">Or if you are here to confirm Task completetion simply enter ID and hit done!</p>
+      <Button  onclick ="updateDB()">Done</Button>
       
 
 

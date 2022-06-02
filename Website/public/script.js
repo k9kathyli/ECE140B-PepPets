@@ -1,45 +1,83 @@
 function registered(){
     let width = screen.width;
-    if (width < 700 ){
-        console.log(width);
-
-        document.body.style.backgroundImage = "url(public/images/mobile_meow2.png)";
-        document.getElementById('msg').innerHTML = "Thank you for registering!";
-    }
-    else{
-        document.body.style.backgroundImage = "url(public/images/meow2.png)";
-        document.getElementById('msg').innerHTML = "Thank you for registering!";
-
-    }
-
     var email =  document.getElementById('email').value;
     var petid =  document.getElementById('petid').value;
-    const xhttp =  new XMLHttpRequest();
-    xhttp.onload = function(){
-        // document.getElementById("msg").innerHTML = this.response;
-    };
-    var string = "email="+email+"&petid="+petid;
 
-    xhttp.open("POST","register.php");
-    xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-    xhttp.send(string);
+    if(email == "" || petid ==""){
+        document.getElementById("msg").innerHTML = "Please enter valid Email/ID";
+        return;
+    }
+    else{
+        if (width < 700 ){
+            console.log(width);
+    
+            document.body.style.backgroundImage = "url(public/images/mobile_meow2.png)";
+            document.getElementById('msg').innerHTML = "Thank you for registering!";
+        }
+        else{
+            document.body.style.backgroundImage = "url(public/images/meow2.png)";
+            document.getElementById('msg').innerHTML = "Thank you for registering!";
+    
+        }
+    
+        const xhttp =  new XMLHttpRequest();
+        xhttp.onload = function(){
+            // document.getElementById("msg").innerHTML = this.response;
+        };
+        var string = "email="+email+"&petid="+petid;
+    
+        xhttp.open("POST","register.php");
+        xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xhttp.send(string);
 
+    }
 }
 
 function sent(){
     let width = screen.width;
-    if (width < 700 ){
+    var task =  document.getElementById('task').value;
+    var petid =  document.getElementById('petid').value;
+    selectElement = document.querySelector('#foods');
+    reward = selectElement.value;
 
-    document.body.style.backgroundImage = "url(public/images/mobile_meow2.png)";
-    document.getElementById('msg').innerHTML = "Sent!";
+    if(petid ==""){
+        document.getElementById("msg").innerHTML = "Please enter valid ID";
     }
     else{
-    document.body.style.backgroundImage = "url(public/images/meow2.png)";
-    document.getElementById('msg').innerHTML = "Sent!"
+        if (width < 700 ){
+            document.body.style.backgroundImage = "url(public/images/mobile_meow2.png)";
+            document.getElementById('msg').innerHTML = "Sent!";
+            }
+            else{
+            document.body.style.backgroundImage = "url(public/images/meow2.png)";
+            document.getElementById('msg').innerHTML = "Sent!"
+            }
+            var string = "petid="+petid + "&reward="+reward +"&task="+task;
+            const xhttp =  new XMLHttpRequest();
+            xhttp.onload = function(){
+                // document.getElementById("msg").innerHTML = this.response;
+            };
+            xhttp.open("POST","sendtask.php");
+            xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhttp.send(string);
     }
+}
+function updateDB(){
+    var petid =  document.getElementById('petid').value;
 
-    // TODO will write code that communicates with server to push task to database
-
+    if(petid ==""){
+        document.getElementById("msg").innerHTML = "Please enter valid ID";
+    }
+    else{
+        const xhttp =  new XMLHttpRequest();
+        xhttp.onload = function(){
+            // document.getElementById("msg").innerHTML = this.response;
+        };
+        xhttp.open("POST","update.php");
+        xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xhttp.send("petid="+petid);
+        document.getElementById('msg').innerHTML = "Task marked complete!";
+    }
 }
 
 function welcome(){

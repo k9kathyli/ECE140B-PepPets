@@ -13,18 +13,14 @@
     }
     echo 'Connected!';
 
-    $email =  $_POST['email'];
     $petid= $_POST['petid'];
-    //echo $email;
-    //echo $petid;
-    $sql = "INSERT INTO ID_emails (petid,owner) VALUES 
-        ('" . $petid . "','".$email . "');";
+    $update ="UPDATE parentTask SET completed=true WHERE petID='".$petid. "';";
 
-    if ($dbcon->query($sql) == TRUE){
-        echo "New parent registered sucessfully";
+    if ($dbcon->query($update) == TRUE){
+        echo "Task Completed!";
     }
     else{
-        echo "Error: " . $sql . " " . $dbcon->error;
+        echo "Error: " . $update . " " . $dbcon->error;
     }
 
     $dbcon->close();
