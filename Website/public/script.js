@@ -27,7 +27,7 @@ function registered(){
         var string = "email="+email+"&petid="+petid;
         var url ="https://github.com/anh010/testserverrepo/blob/main/public/register.php";
         xhttp.open("POST",url);
-        xhttp.setRequestHeader("Accept");
+        // xhttp.setRequestHeader("Accept");
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send(string);
 
