@@ -26,7 +26,7 @@ function registered(){
         };
         var string = "email="+email+"&petid="+petid;
     
-        xhttp.open("POST","public/register.php");
+        xhttp.open("POST","Website/public/register.php");
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send(string);
 
@@ -55,7 +55,7 @@ function sent(){
             xhttp.onload = function(){
                 // document.getElementById("msg").innerHTML = this.response;
             };
-            xhttp.open("POST","public/sendtask.php");
+            xhttp.open("POST","Website/public/sendtask.php");
             xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             xhttp.send(string);
     }
@@ -71,7 +71,7 @@ function updateDB(){
         xhttp.onload = function(){
             // document.getElementById("msg").innerHTML = this.response;
         };
-        xhttp.open("POST","public/update.php");
+        xhttp.open("POST","Website/public/update.php");
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send("petid="+petid);
         document.getElementById('msg').innerHTML = "Task marked complete!";
