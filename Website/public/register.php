@@ -1,4 +1,5 @@
 <?php
+    header('Access-Control-Allow-Origin: *');
     echo 'digital ocean sucks!';
     // $DB_USER=  "doadmin";
     // $DB_PSWD = "AVNS_1OJ-Nk7eUgMXbec";
