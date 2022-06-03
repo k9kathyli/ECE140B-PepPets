@@ -13,12 +13,12 @@
     // }
     // echo 'Connected!';
 
-    $petid= $_POST['petid'];
-    $task= $_POST['task'];
+    // $petid= $_POST['petid'];
+    // $task= $_POST['task'];
     // $reward= $_POST['reward'];
 
-    echo $petid;
-    echo $task;
+    // echo $petid;
+    // echo $task;
     // echo $reward;
 
     // $task = "INSERT INTO parentTask (petID,task,done)
