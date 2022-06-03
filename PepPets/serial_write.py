@@ -2,10 +2,10 @@
 import time
 import serial
 
-ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout = 1)
+ser = serial.Serial(port='/dev/serial1', baudrate = 9600, timeout = 1)
 
 def write():
-    ser.write(b"hello")
+    ser.write(b"Kathy")
 
 while True:
     write()
