@@ -25,8 +25,8 @@ function registered(){
             // document.getElementById("msg").innerHTML = this.response;
         };
         var string = "email="+email+"&petid="+petid;
-    
-        xhttp.open("POST","public/register.php");
+        var url ="https://github.com/k9kathyli/ECE140B-PepPets/blob/main/Website/public/register.php";
+        xhttp.open("POST",url);
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send(string);
 
