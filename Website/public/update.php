@@ -14,7 +14,7 @@
     echo 'Connected!';
 
     $petid= $_POST['petid'];
-    $update ="UPDATE parentTask SET completed=true WHERE petID='".$petid. "';";
+    $update ="UPDATE parentTask SET done=true WHERE petID='".$petid. "';";
 
     if ($dbcon->query($update) == TRUE){
         echo "Task Completed!";

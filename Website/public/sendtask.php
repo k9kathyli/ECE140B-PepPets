@@ -15,14 +15,14 @@
 
     $petid= $_POST['petid'];
     $task= $_POST['task'];
-    $reward= $_POST['reward'];
+    // $reward= $_POST['reward'];
 
     // echo $petid;
     // echo $task;
     // echo $reward;
 
-    $task = "INSERT INTO parentTask (petID,task,completed,reward)
-            VALUES ('" .$petid."','" . $task . "', false, '" . $reward ."');";
+    $task = "INSERT INTO parentTask (petID,task,done)
+            VALUES ('" .$petid."','" . $task . "', false);";
     if ($dbcon->query($task) == TRUE){
         echo "task sent sucessfully!";
     }

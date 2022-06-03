@@ -26,7 +26,7 @@ function registered(){
         };
         var string = "email="+email+"&petid="+petid;
     
-        xhttp.open("POST","register.php");
+        xhttp.open("POST","public/register.php");
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send(string);
 
@@ -37,8 +37,6 @@ function sent(){
     let width = screen.width;
     var task =  document.getElementById('task').value;
     var petid =  document.getElementById('petid').value;
-    selectElement = document.querySelector('#foods');
-    reward = selectElement.value;
 
     if(petid ==""){
         document.getElementById("msg").innerHTML = "Please enter valid ID";
@@ -52,12 +50,12 @@ function sent(){
             document.body.style.backgroundImage = "url(public/images/meow2.png)";
             document.getElementById('msg').innerHTML = "Sent!"
             }
-            var string = "petid="+petid + "&reward="+reward +"&task="+task;
+            var string = "petid="+petid + "&task="+task;
             const xhttp =  new XMLHttpRequest();
             xhttp.onload = function(){
                 // document.getElementById("msg").innerHTML = this.response;
             };
-            xhttp.open("POST","sendtask.php");
+            xhttp.open("POST","public/sendtask.php");
             xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
             xhttp.send(string);
     }
@@ -73,7 +71,7 @@ function updateDB(){
         xhttp.onload = function(){
             // document.getElementById("msg").innerHTML = this.response;
         };
-        xhttp.open("POST","update.php");
+        xhttp.open("POST","public/update.php");
         xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xhttp.send("petid="+petid);
         document.getElementById('msg').innerHTML = "Task marked complete!";
