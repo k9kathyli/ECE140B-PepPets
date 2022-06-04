@@ -1,20 +1,49 @@
+#!/usr/bin/env python
 from asyncio import Task
-import time as timer
-import random
-from threading import Thread
 from datetime import datetime, time
+import mysql.connector as mysql
+import random
+import time as timer
+from threading import Thread
+from PepPets.serial_write import write
+import serial
 
 import EmailParent
 from Hardware.pedometer.steps import track_steps
 from Hardware.progressbar.progress_bar import progress, initpins, clear
 from tasks import TaskFactory
 
+'''
+IMPORTANT: For the MVP, one Pep Pet runs receiver_peppet.py and completely disregards sender_peppet.py
+The receiver Pep Pet continously listens for messages on a serial port. Once a sender Pet writes their message
+(their own ID), the receiver Pet will read it, write to the database that they've made friends with the sender, 
+and that the sender made friends with them. 
+'''
+
+# ---------------- Database credential variables ----------------------
+HOST = "db-mysql-sfo2-96686-do-user-11317347-0.b.db.ondigitalocean.com"
+DATABASE = "peppetEMAIL"
+PORT = 25060
+USER = "doadmin"
+PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
+db = mysql.connect(host=HOST, database=DATABASE,
+                       user=USER, password=PASSWORD, port=PORT)
+cursor = db.cursor()
+print("connected to: ", db.get_server_info())
+
+# ---------------- Serial Port Info -----------------------------------
+ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout=1)
+
+
+# ---------------- 10 Segment LED Info --------------------------------
 bar1 = [4,17,27,22, 10]
 bar2 = [9, 11, 5, 6, 13]
 bar3 = [14, 15, 18, 23, 24]
 
+# ---------------- Global Day/Night Tracker---------------------------
 NIGHT = False
 
+# ---------------- Global Food and Weights----------------------------
 class Food:
     def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
         self.name = name
@@ -33,7 +62,7 @@ WALKING_FOOD_WEIGHTS = [100, 60, 20, 15, 10, 10]
 FRIEND_FOODS = [Food("lollipop", 0, 1, 30),
                 Food("boba", 1, 2, 15)]
 
-
+# ---------------- Main Pep Pet Class -------------------------------
 class PepPet:
     # Metrics
     happiness = 0
@@ -43,7 +72,7 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
-    unique_id = 0
+    unique_id = 1
     global_steps = 0
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
@@ -65,6 +94,13 @@ class PepPet:
         types = random.sample(task_types, 3)
         for task_type in types:
             self.tasks[task_type] = TaskFactory(task_type)
+    
+    def rewardTask(self, task):
+
+        if  task.done and not task.rewarded:
+            task.setRewarded()
+            self.addExperience(task.getReward())
+            print("%s finished a task! You earned %i XP." % (self.name, task.getReward()))
 
     """
     Feed your Pep Pet a food. Will adjust the Pet's happiness, hunger, and exp depending on the food stats
@@ -82,10 +118,13 @@ class PepPet:
         self.addHunger(food.hunger_gain)
         self.addExperience(food.exp)
         self.foods[food.name] -= 1
-        self.setMood()
 
-        if self.tasks["feed"] != None:
-            self.tasks["feed"].addProgress(1)
+        # Update feeding task if it exists
+        feed_task = self.tasks["feed"]
+        if feed_task != None:
+            feed_task.addProgress(1)
+            self.rewardTask(feed_task)
+    
 
     def addExperience(self, value):
         # Check if the Pep Pet can level up and do so if necessary
@@ -118,6 +157,8 @@ class PepPet:
             # Overfeeding makes the Pet unhappy.
             self.addHappiness(-1)
             print("You overfed " + self.name)
+        self.setMood()
+
         print("----------------------------")
 
     def addHappiness(self, value):
@@ -127,11 +168,13 @@ class PepPet:
             self.happiness = 10
         if self.happiness < 0:
             self.happiness = 0
+        self.setMood()
 
         sustain_task = self.tasks["sustain"]
         if sustain_task != None: 
             if self.happiness < sustain_task.threshold:
                 sustain_task.failTask()
+
             
 
     """
@@ -155,15 +198,15 @@ class PepPet:
 
     def hungerControl(self):
         while not NIGHT:
-            timer.sleep(10)
+            timer.sleep(30)
             random_int = random.randint(0, 9)
             if random_int < 5:
-                print("Fluctuate hunger now")
+                print("Decrease hunger now")
                 self.addHunger(-1)
 
     def happinessControl(self):
         while not NIGHT:
-            timer.sleep(10)
+            timer.sleep(30)
             random_int = random.randint(0, 9)
             if random_int > 5:
                 print("Decrease happiness now")
@@ -220,8 +263,6 @@ class PepPet:
         while not NIGHT:
             if track_steps():
                 self.global_steps += 10
-                if self.tasks["walk"] != None:
-                    self.tasks["walk"].addProgress(10)
                 print(self.name + " has walked " + str(self.global_steps))
 
                 # Only get happier on a full stomach. Walking while hungry lowers happiness
@@ -229,8 +270,13 @@ class PepPet:
                     self.addHappiness(-1)
                 else:
                     self.addHappiness(1)
-            if self.global_steps % 20 == 0:
-                # Every 50 steps hunger goes down 1 and there is a chance to pick up a random food!
+            # Every 150 steps the Pet gains 1 EXP
+            if self.global_steps % 150 == 0:
+                self.addExperience(1)
+
+            
+            if self.global_steps % 25 == 0:
+                # Every 25 steps hunger goes down 1 and there is a chance to pick up a random food!
                 self.addHunger(-1)
                 # Pick a random food (foods have different weights)
                 found_food = random.choices(
@@ -241,6 +287,12 @@ class PepPet:
                     self.collectFood(found_food)
                 else:
                     print("Did not find anything")
+
+            walk_task = self.tasks["walk"]
+            if walk_task != None:
+                walk_task.addProgress(10)
+                self.rewardTask(walk_task)
+            self.setMood()
             print("----------------------------")
 
     def showPetbar(self):  
@@ -251,7 +303,6 @@ class PepPet:
             timer.sleep(.5)
 
     def buttonListener(self):
-        
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while not NIGHT:
             self.showPet()
@@ -270,6 +321,23 @@ class PepPet:
             if task != None:
                 task.printTask()
         print("----------------------------")
+    
+
+    def receiveMessage(self):
+        while not NIGHT:
+            x=ser.readline()
+            print(x)
+            if x == "Chonk":
+                self.connectWithFriend(x)
+        # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
+            time.sleep(1) 
+    
+    def writeMessage(self):
+        while not NIGHT:
+            previous_friends = ""
+            ser.write("This is " + self.name)
+            ser.flush()
+            time.sleep(1)
 
 
 '''
@@ -278,6 +346,7 @@ Thread 2: Happiness control: Fluctuates happiness over time
 Thread 3: Pedometer/Step counter: Keeps track of steps and changes metrics depending on that
 Thread 4: Button listener: Handles user input (feeding, customization, etc)
 Thread 5: Bar Control: Displays metric changes on the actual Pep Pet
+Thread 6/7: Read/write data on serial port continuously for friend connections
 '''
 initpins(bar1)
 initpins(bar2)
@@ -286,7 +355,6 @@ clear(bar1)
 clear(bar2)
 clear(bar3)
 myPet = PepPet("Chonk", 123456)
-TwoPet = PepPet("Chonk2", 123457)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
@@ -297,17 +365,20 @@ happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
 buttonControl = Thread(target=myPet.buttonListener)
 progressBar = Thread(target=myPet.showPetbar)
-# progressBar2 = Thread(target=myPet.showPetbar)
+writeID = Thread(target=myPet.writeMessage)
+readID = Thread(target=myPet.receiveMessage)
 
-PepPetThreads = [movementTrack, buttonControl, progressBar]
+PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
 
 
 # Start hunger and happiness fluctuators
-# hungerLoss.start()
-# happinessLoss.start()
+hungerLoss.start()
+happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
 progressBar.start()
+writeID.start()
+readID.start()
 
 myPet.collectFood(steak)
 myPet.collectFood(steak)
@@ -322,7 +393,8 @@ while True:
         print("It's day")
         if NIGHT: 
             NIGHT = False
-
+            # The Pet passively gains 5 exp every day
+            myPet.addExperience(5)
             # We just woke up and should reset our tasks and restart our threads
             myPet.resetTasks()
             hungerLoss = Thread(target=myPet.hungerControl)
