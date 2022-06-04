@@ -5,7 +5,6 @@ import mysql.connector as mysql
 import random
 import time as timer
 from threading import Thread
-from PepPets.serial_write import write
 import serial
 
 import EmailParent
@@ -19,6 +18,7 @@ The receiver Pep Pet continously listens for messages on a serial port. Once a s
 (their own ID), the receiver Pet will read it, write to the database that they've made friends with the sender, 
 and that the sender made friends with them. 
 '''
+print("here")
 
 # ---------------- Database credential variables ----------------------
 HOST = "db-mysql-sfo2-96686-do-user-11317347-0.b.db.ondigitalocean.com"
@@ -26,10 +26,10 @@ DATABASE = "peppetEMAIL"
 PORT = 25060
 USER = "doadmin"
 PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
-db = mysql.connect(host=HOST, database=DATABASE,
-                       user=USER, password=PASSWORD, port=PORT)
-cursor = db.cursor()
-print("connected to: ", db.get_server_info())
+# db = mysql.connect(host=HOST, database=DATABASE,
+#                        user=USER, password=PASSWORD, port=PORT)
+# cursor = db.cursor()
+# print("connected to: ", db.get_server_info())
 
 # ---------------- Serial Port Info -----------------------------------
 ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout=1)
@@ -330,15 +330,15 @@ class PepPet:
             if x == "Chonk":
                 self.connectWithFriend(x)
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
-            time.sleep(1) 
+            timer.sleep(1) 
     
     def writeMessage(self):
         while not NIGHT:
             previous_friends = ""
-            ser.write("This is " + self.name)
+            ser.write(b"This is Chonk")
             ser.flush()
-            time.sleep(1)
-
+            timer.sleep(1)
+print("here")
 
 '''
 Thread 1: Hunger control: Fluctuates hunger over time
@@ -359,6 +359,7 @@ myPet = PepPet("Chonk", 123456)
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
 
+print("here")
 
 hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
@@ -370,7 +371,7 @@ readID = Thread(target=myPet.receiveMessage)
 
 PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
 
-
+print("here")
 # Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()
