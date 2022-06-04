@@ -5,6 +5,7 @@ import mysql.connector as mysql
 import random
 import time as timer
 from threading import Thread
+from numpy import byte
 import serial
 
 import EmailParent
@@ -332,16 +333,13 @@ class PepPet:
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
 
     def writeMessage(self):
-        # while not NIGHT:
+        while not NIGHT:
         #     previous_friends = ""
-        try:
-            while True:
-                ser.write(b"Kathy")
-                ser.flush()
-                print("sending")
-                timer.sleep(1)
-        except KeyboardInterrupt:
-            ser.close()
+            ser.write(bytes(self.name, "utf-8"))
+            ser.flush()
+            print("sending")
+            timer.sleep(1)
+
 print("here")
 
 '''
@@ -358,17 +356,17 @@ Thread 6/7: Read/write data on serial port continuously for friend connections
 # clear(bar1)
 # clear(bar2)
 # clear(bar3)
-myPet = PepPet("Chonk", 123456)
+myPet = PepPet("Beans", 123456)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
 
 print("here")
 
-# hungerLoss = Thread(target=myPet.hungerControl)
-# happinessLoss = Thread(target=myPet.happinessControl)
-# movementTrack = Thread(target=myPet.movementTracker)
-# buttonControl = Thread(target=myPet.buttonListener)
+hungerLoss = Thread(target=myPet.hungerControl)
+happinessLoss = Thread(target=myPet.happinessControl)
+movementTrack = Thread(target=myPet.movementTracker)
+buttonControl = Thread(target=myPet.buttonListener)
 # progressBar = Thread(target=myPet.showPetbar)
 writeID = Thread(target=myPet.writeMessage)
 readID = Thread(target=myPet.receiveMessage)
@@ -377,10 +375,10 @@ readID = Thread(target=myPet.receiveMessage)
 
 print("here")
 # Start hunger and happiness fluctuators
-# hungerLoss.start()
-# happinessLoss.start()
-# movementTrack.start()
-# buttonControl.start()
+hungerLoss.start()
+happinessLoss.start()
+movementTrack.start()
+buttonControl.start()
 # progressBar.start()
 writeID.start()
 readID.start()
