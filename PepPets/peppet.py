@@ -27,9 +27,9 @@ DATABASE = "peppetEMAIL"
 PORT = 25060
 USER = "doadmin"
 PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
-# db = mysql.connect(host=HOST, database=DATABASE,
+db = mysql.connect(host=HOST, database=DATABASE,
 #                        user=USER, password=PASSWORD, port=PORT)
-# cursor = db.cursor()
+cursor = db.cursor()
 # print("connected to: ", db.get_server_info())
 
 # ---------------- Serial Port Info -----------------------------------
@@ -43,6 +43,7 @@ ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout=1)
 
 # ---------------- Global Day/Night Tracker---------------------------
 NIGHT = False
+COOLDOWN = False
 
 # ---------------- Global Food and Weights----------------------------
 class Food:
@@ -323,18 +324,19 @@ class PepPet:
                 task.printTask()
         print("----------------------------")
     
-
     def receiveMessage(self):
-        while 1:
+        while not COOLDOWN:
             x=ser.readline()
             print(x)
-            # if x == "Chonk":
-            #     self.connectWithFriend(x)
+            x.encode("ascii", 'ignore')
+
+            if x == "Chonk":
+                self.connectWithFriend(x)
+                COOLDOWN = True
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
 
     def writeMessage(self):
         while not NIGHT:
-        #     previous_friends = ""
             ser.write(bytes(self.name, "utf-8"))
             ser.flush()
             print("sending")
@@ -385,34 +387,35 @@ readID.start()
 
 myPet.collectFood(steak)
 myPet.collectFood(steak)
-# while True:
-#     now = datetime.now()
-#     now_time = now.time()
-#     if now_time >= time(13,13) and now_time <= time(13,14):
-#         print(now_time)
-#         print ("It's night")
-#         NIGHT = True
-#     else:
-#         print("It's day")
-#         if NIGHT: 
-#             NIGHT = False
-#             # The Pet passively gains 5 exp every day
-#             myPet.addExperience(5)
-#             # We just woke up and should reset our tasks and restart our threads
-#             myPet.resetTasks()
-#             hungerLoss = Thread(target=myPet.hungerControl)
-#             happinessLoss = Thread(target=myPet.happinessControl)
-#             movementTrack = Thread(target=myPet.movementTracker)
-#             buttonControl = Thread(target=myPet.buttonListener)
-#             progressBar = Thread(target=myPet.showPetbar)
-#             # PepPetThreads = [movementTrack, buttonControl, progressBar]
-#             movementTrack.start()
-#             buttonControl.start()
-#             progressBar.start()
-#         NIGHT = False
+while True:
+    now = datetime.now()
+    now_time = now.time()
+    if now_time >= time(13,13) and now_time <= time(13,14):
+        print(now_time)
+        print ("It's night")
+        NIGHT = True
+    else:
+        print("It's day")
+        if NIGHT: 
+            NIGHT = False
+            COOLDOWN = False
+            # The Pet passively gains 5 exp every day
+            myPet.addExperience(5)
+            # We just woke up and should reset our tasks and restart our threads
+            myPet.resetTasks()
+            hungerLoss = Thread(target=myPet.hungerControl)
+            happinessLoss = Thread(target=myPet.happinessControl)
+            movementTrack = Thread(target=myPet.movementTracker)
+            buttonControl = Thread(target=myPet.buttonListener)
+            progressBar = Thread(target=myPet.showPetbar)
+            # PepPetThreads = [movementTrack, buttonControl, progressBar]
+            movementTrack.start()
+            buttonControl.start()
+            progressBar.start()
+        NIGHT = False
     
-#     #Wait an hour before checking again
-#     timer.sleep(10)
+    #Wait an hour before checking again
+    timer.sleep(10)
 
 
 # # # myPet.hungerControl()
