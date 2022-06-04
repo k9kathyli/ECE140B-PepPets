@@ -324,7 +324,7 @@ class PepPet:
     
 
     def receiveMessage(self):
-        while not NIGHT:
+        while True:
             x=ser.readline()
             print(x)
             if x == "Chonk":
@@ -335,7 +335,7 @@ class PepPet:
     def writeMessage(self):
         while not NIGHT:
             previous_friends = ""
-            ser.write(b"This is Chonk")
+            ser.write(b"This is beans")
             ser.flush()
             timer.sleep(1)
 print("here")
@@ -373,44 +373,44 @@ PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progre
 
 print("here")
 # Start hunger and happiness fluctuators
-hungerLoss.start()
-happinessLoss.start()
-movementTrack.start()
-buttonControl.start()
-progressBar.start()
-writeID.start()
+# hungerLoss.start()
+# happinessLoss.start()
+# movementTrack.start()
+# buttonControl.start()
+# progressBar.start()
+# writeID.start()
 readID.start()
 
 myPet.collectFood(steak)
 myPet.collectFood(steak)
-while True:
-    now = datetime.now()
-    now_time = now.time()
-    if now_time >= time(13,13) and now_time <= time(13,14):
-        print(now_time)
-        print ("It's night")
-        NIGHT = True
-    else:
-        print("It's day")
-        if NIGHT: 
-            NIGHT = False
-            # The Pet passively gains 5 exp every day
-            myPet.addExperience(5)
-            # We just woke up and should reset our tasks and restart our threads
-            myPet.resetTasks()
-            hungerLoss = Thread(target=myPet.hungerControl)
-            happinessLoss = Thread(target=myPet.happinessControl)
-            movementTrack = Thread(target=myPet.movementTracker)
-            buttonControl = Thread(target=myPet.buttonListener)
-            progressBar = Thread(target=myPet.showPetbar)
-            # PepPetThreads = [movementTrack, buttonControl, progressBar]
-            movementTrack.start()
-            buttonControl.start()
-            progressBar.start()
-        NIGHT = False
+# while True:
+#     now = datetime.now()
+#     now_time = now.time()
+#     if now_time >= time(13,13) and now_time <= time(13,14):
+#         print(now_time)
+#         print ("It's night")
+#         NIGHT = True
+#     else:
+#         print("It's day")
+#         if NIGHT: 
+#             NIGHT = False
+#             # The Pet passively gains 5 exp every day
+#             myPet.addExperience(5)
+#             # We just woke up and should reset our tasks and restart our threads
+#             myPet.resetTasks()
+#             hungerLoss = Thread(target=myPet.hungerControl)
+#             happinessLoss = Thread(target=myPet.happinessControl)
+#             movementTrack = Thread(target=myPet.movementTracker)
+#             buttonControl = Thread(target=myPet.buttonListener)
+#             progressBar = Thread(target=myPet.showPetbar)
+#             # PepPetThreads = [movementTrack, buttonControl, progressBar]
+#             movementTrack.start()
+#             buttonControl.start()
+#             progressBar.start()
+#         NIGHT = False
     
-    #Wait an hour before checking again
-    timer.sleep(10)
+#     #Wait an hour before checking again
+#     timer.sleep(10)
 
 
 # # # myPet.hungerControl()
