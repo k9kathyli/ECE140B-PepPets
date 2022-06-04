@@ -9,7 +9,7 @@ import serial
 
 import EmailParent
 from Hardware.pedometer.steps import track_steps
-from Hardware.progressbar.progress_bar import progress, initpins, clear
+# from Hardware.progressbar.progress_bar import progress, initpins, clear
 from tasks import TaskFactory
 
 '''
@@ -36,9 +36,9 @@ ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout=1)
 
 
 # ---------------- 10 Segment LED Info --------------------------------
-bar1 = [4,17,27,22, 10]
-bar2 = [9, 11, 5, 6, 13]
-bar3 = [14, 15, 18, 23, 24]
+# bar1 = [4,17,27,22, 10]
+# bar2 = [9, 11, 5, 6, 13]
+# bar3 = [14, 15, 18, 23, 24]
 
 # ---------------- Global Day/Night Tracker---------------------------
 NIGHT = False
@@ -295,12 +295,12 @@ class PepPet:
             self.setMood()
             print("----------------------------")
 
-    def showPetbar(self):  
-        while not NIGHT:
-            progress(bar3, self.hunger)
-            progress(bar2, self.happiness)
-            progress(bar1, int(self.experience/10))
-            timer.sleep(.5)
+    # def showPetbar(self):  
+    #     while not NIGHT:
+    #         progress(bar3, self.hunger)
+    #         progress(bar2, self.happiness)
+    #         progress(bar1, int(self.experience/10))
+    #         timer.sleep(.5)
 
     def buttonListener(self):
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
@@ -324,20 +324,24 @@ class PepPet:
     
 
     def receiveMessage(self):
-        while True:
+        while 1:
             x=ser.readline()
             print(x)
-            if x == "Chonk":
-                self.connectWithFriend(x)
+            # if x == "Chonk":
+            #     self.connectWithFriend(x)
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
-            timer.sleep(1) 
-    
+
     def writeMessage(self):
-        while not NIGHT:
-            previous_friends = ""
-            ser.write(b"This is beans")
-            ser.flush()
-            timer.sleep(1)
+        # while not NIGHT:
+        #     previous_friends = ""
+        try:
+            while True:
+                ser.write(b"Kathy")
+                ser.flush()
+                print("sending")
+                timer.sleep(1)
+        except KeyboardInterrupt:
+            ser.close()
 print("here")
 
 '''
@@ -348,12 +352,12 @@ Thread 4: Button listener: Handles user input (feeding, customization, etc)
 Thread 5: Bar Control: Displays metric changes on the actual Pep Pet
 Thread 6/7: Read/write data on serial port continuously for friend connections
 '''
-initpins(bar1)
-initpins(bar2)
-initpins(bar3)
-clear(bar1)
-clear(bar2)
-clear(bar3)
+# initpins(bar1)
+# initpins(bar2)
+# initpins(bar3)
+# clear(bar1)
+# clear(bar2)
+# clear(bar3)
 myPet = PepPet("Chonk", 123456)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
@@ -361,15 +365,15 @@ steak = Food("Steak", 3, 1, 30)
 
 print("here")
 
-hungerLoss = Thread(target=myPet.hungerControl)
-happinessLoss = Thread(target=myPet.happinessControl)
-movementTrack = Thread(target=myPet.movementTracker)
-buttonControl = Thread(target=myPet.buttonListener)
-progressBar = Thread(target=myPet.showPetbar)
+# hungerLoss = Thread(target=myPet.hungerControl)
+# happinessLoss = Thread(target=myPet.happinessControl)
+# movementTrack = Thread(target=myPet.movementTracker)
+# buttonControl = Thread(target=myPet.buttonListener)
+# progressBar = Thread(target=myPet.showPetbar)
 writeID = Thread(target=myPet.writeMessage)
 readID = Thread(target=myPet.receiveMessage)
 
-PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
+# PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
 
 print("here")
 # Start hunger and happiness fluctuators
@@ -378,7 +382,7 @@ print("here")
 # movementTrack.start()
 # buttonControl.start()
 # progressBar.start()
-# writeID.start()
+writeID.start()
 readID.start()
 
 myPet.collectFood(steak)
