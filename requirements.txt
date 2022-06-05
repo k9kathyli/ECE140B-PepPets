@@ -1,0 +1,5 @@
+gspread
+oauth2client
+pyserial
+adafruit-blinka
+Adafruit-SSD1306
