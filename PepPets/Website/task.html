@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> Pep Pets </title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="script.js"></script>
+  </head>
+
+  <body id ="body">
+    <div class="title"> Welcome Back! </div>
+
+    <p class="title"> Enter Custom tasks for your child's Pet </p>
+
+    <div class ="login">
+      ID: <input type="text" id="petID">
+      Task: <input type="text" id="task"><br>
+      <Button onclick ="createTask()"> Submit </Button>
+      <p class="title"> Or if you are here to confirm Task completetion simply enter ID and hit done! </p>
+      <Button onclick="updateSheet()"> Done </Button>
+    </div>
+
+    <div class="login">
+      <p id="msg" class="title"> </p>
+    </div>
+  </body>
+</html>
