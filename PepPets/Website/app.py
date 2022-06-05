@@ -63,7 +63,7 @@ def finish_task(req):
             sheet.update_cell(row, 3, "")
 
 # Main entrypoint
-if __name__ == '__main__':
+def run_server():
    with Configurator() as config:
        # Create a route called home. Bind the view (defined by index_page) to the route named ‘home’
        config.add_route('home', '/')
