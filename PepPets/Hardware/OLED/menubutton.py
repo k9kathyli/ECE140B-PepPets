@@ -50,7 +50,7 @@ def faceIdle(press_idx, mood):
     disp.image(image)
     disp.display()
 
-def feedPage(tasks):
+def feedPage():
     disp.clear()
 
     image = Image.open(PATH + '/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
@@ -59,9 +59,12 @@ def feedPage(tasks):
     disp.image(image)
     disp.display()
 
-def taskPage():
-    # 128 x 64 pixel display
+def friendsPage(friends):
+    showFriend = ["No Friends Yet",""]
+    friendsLength = len(friends)
 
+    for i in range(friendsLength):
+        showFriend[i] = friends[i]
     disp.clear()
     
     image = Image.open(PATH + "/menu/blank.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
@@ -69,8 +72,26 @@ def taskPage():
     image=image.convert('1')
     draw = ImageDraw.Draw(image)
 
-    draw.text((12, y_offset+4), "Task 1",  font=font, fill=255)
-    draw.text((12, y_offset+14), "Task 2",  font=font, fill=255)
+    draw.text((12, y_offset+4), displayString(showFriend[0]),  font=font, fill=255)
+    draw.text((12, y_offset+14), displayString(showFriend[1]),  font=font, fill=255)
+    draw.text((12, y_offset+24), "B A C K",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
+def taskPage(Tasks):
+    # 128 x 64 pixel display
+    showTasks = ["",""]
+    for i in range(2):
+        showTasks[i] = Tasks[i]
+    disp.clear()
+    
+    image = Image.open(PATH + "/menu/blank.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((12, y_offset+4), displayString(showTasks[0]),  font=font, fill=255)
+    draw.text((12, y_offset+14), displayString(showTasks[1]),  font=font, fill=255)
     draw.text((12, y_offset+24), "B A C K",  font=font, fill=255)
     disp.image(image)
     disp.display()
@@ -95,6 +116,12 @@ def menuPage(press_idx):
     draw.text((12, y_offset+24), "B A C K",  font=font, fill=255)
     disp.image(image)
     disp.display()
+
+def displayString(string):
+    string = string.replace(" ","  ")
+    string = " ".join(string)
+    return string
+
 
 
 

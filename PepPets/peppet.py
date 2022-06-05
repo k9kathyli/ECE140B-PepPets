@@ -8,7 +8,7 @@ from threading import Thread
 from numpy import byte
 import serial
 import board
-import EmailParent
+import email_parent
 from Hardware.pedometer.steps import track_steps
 from Hardware.OLED.menubutton import *
 from Hardware.progressbar.progress_bar import progress, initpins, clear
@@ -87,9 +87,10 @@ class PepPet:
     def resetTasks(self):
         self.tasks = dict.fromkeys(self.tasks, None)
         task_types = ["walk", "feed", "connect", "sustain"]
-        types = random.sample(task_types, 3)
+        # types = random.sample(task_types, 3)
+        types = ['walk', 'custom']
         for task_type in types:
-            self.tasks[task_type] = TaskFactory(task_type)
+            self.tasks[task_type] = TaskFactory(task_type, self.name)
     
     def rewardTask(self, task):
 
@@ -224,7 +225,7 @@ class PepPet:
             self.addHappiness(5)
             self.addExperience(30)
             self.collectFood(FRIEND_FOODS[0])
-            EmailParent.sendEmail(self.petID)
+            email_parent.sendEmail(self.petID)
         else:
             print("It's nice to meet " + friend + "again!")
             self.addHappiness(3)
@@ -374,7 +375,11 @@ class PepPet:
                         
 
             elif activepage == "taskpage":
-                taskPage()
+                listoftask = []
+                for task in self.tasks.values():
+                    if task != None:
+                        listoftask.append(task.printTask())
+                taskPage(listoftask)
 
                 if buttonPress[1]:
                     activepage = "menupage"
@@ -382,7 +387,7 @@ class PepPet:
                     
 
             elif activepage == "friendspage":
-                # friendspage()
+                friendsPage(self.friends)
 
                 if buttonPress[1]:
                     activepage = "menupage"
@@ -437,9 +442,10 @@ class PepPet:
         print("    Experience: " + str(self.experience))
         print("Foods: " + str(self.foods))
         # print(self.tasks)
+        self.tasks["custom"].retrieveTask(self.name)
         for task in self.tasks.values():
             if task != None:
-                task.printTask()
+                print(task.printTask())
         print("----------------------------")
     
     def receiveMessage(self):

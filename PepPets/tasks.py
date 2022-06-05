@@ -21,7 +21,7 @@ EXP_REWARD = [5, 10, 15, 20, 25]
 class Task:
     done = False
     rewarded = False
-    def __init__(self): 
+    def __init__(self, user): 
         self.reward = random.choice(EXP_REWARD)
         print(self.reward)
     def setDone(self):
@@ -33,14 +33,13 @@ class Task:
 
 class WalkTask(Task):
     current_steps = 0
-    def __init__(self):
-        Task.__init__(self)
+    def __init__(self, user):
+        Task.__init__(self, user)
         self.num_steps = random.choice(STEP_COUNTS)
     def printTask(self):
-        status = "    "
         if self.done: 
             status = "DONE"
-        print("%s - Walk %d steps. %d/%d" % (status, self.num_steps, self.current_steps, self.num_steps))
+        return ("Walk %d steps. %d/%d" % (self.num_steps, self.current_steps, self.num_steps))
     def addProgress(self, steps):
         self.current_steps += steps
         if self.current_steps >= self.num_steps:
@@ -48,14 +47,14 @@ class WalkTask(Task):
 
 class FeedTask(Task):
     current_food = 0
-    def __init__(self): 
-        Task.__init__(self)
+    def __init__(self, user): 
+        Task.__init__(self, user)
         self.feed_times = random.choice(FOOD_COUNTS)
     def printTask(self):
         status = "    "
         if self.done: 
             status = "DONE"
-        print("%s - Eat %d non-infinite foods. %d/%d" % (status, self.feed_times, self.current_food, self.feed_times))
+        return ("Eat %d non-infinite foods. %d/%d" % (self.feed_times, self.current_food, self.feed_times))
     def addProgress(self, num):
         self.current_food += num
         if self.current_food >= self.feed_times:
@@ -70,36 +69,43 @@ class ConnectTask(Task):
             add_friend(user, friend)
             print("Connected with new friend")
     def printTask(self):
-        print("     - Connect with 1 friend today." )
+        return ("Connect with 1 friend today." )
 
 class SustainHappinessTask(Task): 
     success = True
-    def __init__(self): 
-        Task.__init__(self)
+    def __init__(self, user): 
+        Task.__init__(self, user)
         self.threshold = random.choice(HAPPINESS_THRESHOLDS)
     def printTask(self):
-        status = "    "
         if self.done: 
             status = "DONE"
         if not self.success:
             status = "FAIL"
-        print("%s - Keep your pet above %i happiness until bedtime." % (status, self.threshold))
+        return ("Keep your pet above %i happiness until bedtime." % (self.threshold))
     def failTask(self):
         success = False
 
 class CustomTask(Task):
-    def printCustomTask(self, user):
+    taskstring = ""
+    def __init__(self, user): 
+        Task.__init__(self, user)
+        self.retrieveTask(user)
+    def retrieveTask(self, user):
         if(check_task(user)):
-            print(get_task(user))
+            self.taskstring = get_task(user)
 
-def TaskFactory(task_type):
+    def printTask(self):
+        return self.taskstring
+
+def TaskFactory(task_type, user):
     tasks = {
         "walk" : WalkTask,
         "feed" : FeedTask,
         "connect" : ConnectTask,
-        "sustain" : SustainHappinessTask
+        "sustain" : SustainHappinessTask,
+        "custom"  : CustomTask
     }
-    return tasks[task_type]()
+    return tasks[task_type](user)
 
 # Test generating some tasks using our factory.
 # In order to generate a task of a type, use this syntax: wt = TaskFactory("walk")
