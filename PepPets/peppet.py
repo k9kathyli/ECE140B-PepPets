@@ -11,7 +11,7 @@ import board
 import EmailParent
 from Hardware.pedometer.steps import track_steps
 from Hardware.OLED.menubutton import *
-# from Hardware.progressbar.progress_bar import progress, initpins, clear
+from Hardware.progressbar.progress_bar import progress, initpins, clear
 from tasks import TaskFactory
 
 
@@ -31,9 +31,9 @@ ser = serial.Serial(port='/dev/serial0', baudrate = 9600, timeout=1)
 
 
 # ---------------- 10 Segment LED Info --------------------------------
-# bar1 = [4,17,27,22, 10]
-# bar2 = [9, 11, 5, 6, 13]
-# bar3 = [14, 15, 18, 23, 24]
+bar1 = [23,24,25,8,7]
+bar2 = [5,6,13,19,26]
+bar3 = [17,27,22,10,9]
 
 # ---------------- Global Day/Night Tracker---------------------------
 NIGHT = False
@@ -293,12 +293,12 @@ class PepPet:
             self.setMood()
             print("----------------------------")
 
-    # def showPetbar(self):  
-    #     while not NIGHT:
-    #         progress(bar3, self.hunger)
-    #         progress(bar2, self.happiness)
-    #         progress(bar1, int(self.experience/10))
-    #         timer.sleep(.5)
+    def showPetbar(self):  
+        while not NIGHT:
+            progress(bar1, self.hunger)
+            progress(bar2, self.happiness)
+            progress(bar3, int(self.experience/10))
+            timer.sleep(.5)
 
     def buttonListener(self, press_idx):
         moods = {"depressed" : "/menu/madge.png",
@@ -309,6 +309,8 @@ class PepPet:
         activeoption = "menu"
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while not NIGHT:
+            
+            buttonPress = detect()
             if activepage == "facepage":
                 if activeoption == "menu":
                     press_idx = 1
@@ -316,11 +318,11 @@ class PepPet:
                     press_idx = 2
                 faceIdle(press_idx,"/menu/madge.png")
 
-                if detect()[0] and activeoption == "feed":
+                if buttonPress[0] and activeoption == "feed":
                     activeoption = "menu"
-                elif detect()[2] and activeoption == "menu":
+                elif buttonPress[2] and activeoption == "menu":
                     activeoption = "feed"
-                if detect()[1]:
+                if buttonPress[1]:
                     if activeoption == "menu":
                         activepage = "menupage"
                         activeoption = "task"
@@ -331,44 +333,50 @@ class PepPet:
                 
 
             elif activepage == "menupage":
-                # menupage()
+                if activeoption == "task":
+                    press_idx = 1
+                if activeoption == "friends":
+                    press_idx = 2
+                if activeoption == "back":
+                    press_idx = 3
+                menuPage(press_idx)
 
                 # cursor on task
                 if activeoption == "task":
-                    if detect()[1]:
+                    if buttonPress[1]:
                         activepage = "taskpage"
                         activeoption = "backtomenu"
                         
-                    elif detect()[2]:
+                    elif buttonPress[2]:
                         activeoption = "friends"
                         
 
                 # cursor on friends
                 elif activeoption == "friends":
-                    if detect()[0]:
+                    if buttonPress[0]:
                         activeoption = "task"
                         
-                    elif detect()[1]:
+                    elif buttonPress[1]:
                         activepage = "friendspage"
                         activeoption = "backtomenu"
                         
-                    elif detect()[2]:
+                    elif buttonPress[2]:
                         activeoption = "back"
                         
 
                 # cursor on back
                 elif activeoption == "back":
-                    if detect()[0]:
+                    if buttonPress[0]:
                         activeoption = "friends"
-                    elif detect()[1]:
+                    elif buttonPress[1]:
                         activepage = "facepage"
                         activeoption = "menu"
                         
 
             elif activepage == "taskpage":
-                # taskpage()
+                taskPage()
 
-                if detect()[1]:
+                if buttonPress[1]:
                     activepage = "menupage"
                     activeoption = "task"
                     
@@ -376,47 +384,49 @@ class PepPet:
             elif activepage == "friendspage":
                 # friendspage()
 
-                if detect()[1]:
+                if buttonPress[1]:
                     activepage = "menupage"
                     activeoption = "task"
 
             # default cursor on chicken
             elif activepage == "foodpage":
                 feedPage()
-                listoffoods = list(self.foods.keys())
+                listoffoods = list(foods.keys())
                 lastfood = len(listoffoods) - 1
 
                 if activeoption == 0:
-                    if detect()[0]:
+                    if buttonPress[0]:
                         activepage = "facepage"
                         activeoption = "menu"
-                    elif detect()[1]:
+                    elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
                         # feed(listoffoods[activeoption])
-                    elif detect()[2]:
+                    elif buttonPress[2]:
                         activeoption += 1
 
                 elif activeoption == lastfood:
-                    if detect()[0]:
+                    if buttonPress[0]:
                         activeoption -= 1
-                    elif detect()[1]:
+                    elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
                         # feed(listoffoods[activeoption])
-                    elif detect()[2]:
+                    elif buttonPress[2]:
                         activepage = "facepage"
                         activeoption = "menu"
 
                 else:
-                    if detect()[0]:
+                    if buttonPress[0]:
                         activeoption -= 1
-                    elif detect()[1]:
+                    elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
                         # feed(listoffoods[activeoption])
-                    elif detect()[2]:
+                    elif buttonPress[2]:
                         activeoption += 1
+
             # print(activepage)
             # print(activeoption)
-            time.sleep(0.1)
+            # print("-----------------------------")
+            time.sleep(.01)
 
     def showPet(self):
         print("Name: " + self.name)
@@ -461,12 +471,12 @@ Thread 6/7: Read/write data on serial port continuously for friend connections
 '''
 # setup()
 # press_idx = 1
-# # initpins(bar1)
-# initpins(bar2)
-# initpins(bar3)
-# clear(bar1)
-# clear(bar2)
-# clear(bar3)
+initpins(bar1)
+initpins(bar2)
+initpins(bar3)
+clear(bar1)
+clear(bar2)
+clear(bar3)
 myPet = PepPet("Beans", 123456)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
@@ -478,7 +488,7 @@ hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
 buttonControl = Thread(target=myPet.buttonListener, args=(press_idx,))
-# progressBar = Thread(target=myPet.showPetbar)
+progressBar = Thread(target=myPet.showPetbar)
 writeID = Thread(target=myPet.writeMessage)
 readID = Thread(target=myPet.receiveMessage)
 
@@ -490,7 +500,7 @@ hungerLoss.start()
 happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
-# progressBar.start()
+progressBar.start()
 # writeID.start()
 # readID.start()
 

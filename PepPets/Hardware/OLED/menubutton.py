@@ -107,9 +107,26 @@ def setup():
 
 # If button pressed return 1, else return 0
 def detect():
-    leftArrowState = 1 if GPIO.input(leftArrowPin) == GPIO.LOW else 0
-    middleSelectState = 1 if GPIO.input(middleSelectPin) == GPIO.LOW else 0
-    rightArrowState = 1 if GPIO.input(rightArrowPin) == GPIO.LOW else 0
+    leftArrowState = middleSelectState = rightArrowState = 0
+    
+    if GPIO.input(leftArrowPin) == GPIO.LOW:
+        startTime = time.time() * 1000
+        while GPIO.input(leftArrowPin) == GPIO.LOW:
+            time.sleep(.01)
+            # print("left")
+        leftArrowState = 1
+    if GPIO.input(middleSelectPin) == GPIO.LOW:
+        startTime = time.time() * 1000
+        while GPIO.input(middleSelectPin) == GPIO.LOW:
+            time.sleep(.01)
+            # print("select")
+        middleSelectState = 1
+    if GPIO.input(rightArrowPin) == GPIO.LOW:
+        startTime = time.time() * 1000
+        while GPIO.input(rightArrowPin) == GPIO.LOW:
+            time.sleep(.01)
+            # print("right")
+        rightArrowState = 1
 
     return (leftArrowState, middleSelectState, rightArrowState)
 
@@ -119,129 +136,122 @@ activepage = "facepage"
 activeoption = "menu"
 foods = {"Chicken": 9999, "steak": 2, "sauce": 45, "stuff": 7}
 
-while True:
-    
-    if activepage == "facepage":
-        if activeoption == "menu":
-            press_idx = 1
-        if activeoption == "feed":
-            press_idx = 2
-        faceIdle(press_idx,"/menu/madge.png")
+# while True:
 
-        if detect()[0] and activeoption == "feed":
-            activeoption = "menu"
-        elif detect()[2] and activeoption == "menu":
-            activeoption = "feed"
-        if detect()[1]:
-            if activeoption == "menu":
-                activepage = "menupage"
-                activeoption = "task"
-            elif activeoption == "feed":
-                activepage = "foodpage"
-                activeoption = 0
+#     buttonPress = detect()
+#     if activepage == "facepage":
+#         if activeoption == "menu":
+#             press_idx = 1
+#         if activeoption == "feed":
+#             press_idx = 2
+#         faceIdle(press_idx,"/menu/madge.png")
+
+#         if buttonPress[0] and activeoption == "feed":
+#             activeoption = "menu"
+#         elif buttonPress[2] and activeoption == "menu":
+#             activeoption = "feed"
+#         if buttonPress[1]:
+#             if activeoption == "menu":
+#                 activepage = "menupage"
+#                 activeoption = "task"
+#             elif activeoption == "feed":
+#                 activepage = "foodpage"
+#                 activeoption = 0
             
         
 
-    elif activepage == "menupage":
-        if activeoption == "task":
-            press_idx = 1
-        if activeoption == "friends":
-            press_idx = 2
-        if activeoption == "back":
-            press_idx = 3
-        menuPage(press_idx)
+#     elif activepage == "menupage":
+#         if activeoption == "task":
+#             press_idx = 1
+#         if activeoption == "friends":
+#             press_idx = 2
+#         if activeoption == "back":
+#             press_idx = 3
+#         menuPage(press_idx)
 
-        # cursor on task
-        if activeoption == "task":
-            if detect()[1]:
-                activepage = "taskpage"
-                activeoption = "backtomenu"
+#         # cursor on task
+#         if activeoption == "task":
+#             if buttonPress[1]:
+#                 activepage = "taskpage"
+#                 activeoption = "backtomenu"
                 
-            elif detect()[2]:
-                activeoption = "friends"
-                
-
-        # cursor on friends
-        elif activeoption == "friends":
-            if detect()[0]:
-                activeoption = "task"
-                
-            elif detect()[1]:
-                activepage = "friendspage"
-                activeoption = "backtomenu"
-                
-            elif detect()[2]:
-                activeoption = "back"
+#             elif buttonPress[2]:
+#                 activeoption = "friends"
                 
 
-        # cursor on back
-        elif activeoption == "back":
-            if detect()[0]:
-                activeoption = "friends"
-            elif detect()[1]:
-                activepage = "facepage"
-                activeoption = "menu"
+#         # cursor on friends
+#         elif activeoption == "friends":
+#             if buttonPress[0]:
+#                 activeoption = "task"
+                
+#             elif buttonPress[1]:
+#                 activepage = "friendspage"
+#                 activeoption = "backtomenu"
+                
+#             elif buttonPress[2]:
+#                 activeoption = "back"
                 
 
-    elif activepage == "taskpage":
-        taskPage()
+#         # cursor on back
+#         elif activeoption == "back":
+#             if buttonPress[0]:
+#                 activeoption = "friends"
+#             elif buttonPress[1]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
+                
 
-        if detect()[1]:
-            activepage = "menupage"
-            activeoption = "task"
+#     elif activepage == "taskpage":
+#         taskPage()
+
+#         if buttonPress[1]:
+#             activepage = "menupage"
+#             activeoption = "task"
             
 
-    elif activepage == "friendspage":
-        # friendspage()
+#     elif activepage == "friendspage":
+#         # friendspage()
 
-        if detect()[1]:
-            activepage = "menupage"
-            activeoption = "task"
+#         if buttonPress[1]:
+#             activepage = "menupage"
+#             activeoption = "task"
 
-    # default cursor on chicken
-    elif activepage == "foodpage":
-        feedPage()
-        listoffoods = list(foods.keys())
-        lastfood = len(listoffoods) - 1
+#     # default cursor on chicken
+#     elif activepage == "foodpage":
+#         feedPage()
+#         listoffoods = list(foods.keys())
+#         lastfood = len(listoffoods) - 1
 
-        if activeoption == 0:
-            if detect()[0]:
-                activepage = "facepage"
-                activeoption = "menu"
-            elif detect()[1]:
-                print("feeding " + listoffoods[activeoption])
-                # feed(listoffoods[activeoption])
-            elif detect()[2]:
-                activeoption += 1
+#         if activeoption == 0:
+#             if buttonPress[0]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
+#             elif buttonPress[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif buttonPress[2]:
+#                 activeoption += 1
 
-        elif activeoption == lastfood:
-            if detect()[0]:
-                activeoption -= 1
-            elif detect()[1]:
-                print("feeding " + listoffoods[activeoption])
-                # feed(listoffoods[activeoption])
-            elif detect()[2]:
-                activepage = "facepage"
-                activeoption = "menu"
+#         elif activeoption == lastfood:
+#             if buttonPress[0]:
+#                 activeoption -= 1
+#             elif buttonPress[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif buttonPress[2]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
 
-        else:
-            if detect()[0]:
-                activeoption -= 1
-            elif detect()[1]:
-                print("feeding " + listoffoods[activeoption])
-                # feed(listoffoods[activeoption])
-            elif detect()[2]:
-                activeoption += 1
+#         else:
+#             if buttonPress[0]:
+#                 activeoption -= 1
+#             elif buttonPress[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif buttonPress[2]:
+#                 activeoption += 1
 
-
-
-
-            
-
-
-
-
-    print(activepage)
-    print(activeoption)
-    print("-----------------------------")
-    time.sleep(1)
+#     # print(activepage)
+#     # print(activeoption)
+#     # print("-----------------------------")
+#     time.sleep(.01)
