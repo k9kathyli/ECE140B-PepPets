@@ -48,15 +48,17 @@ class Food:
         self.exp = exp
 
 WALKING_FOODS = ["nothing",
-                 Food("steak", 3, 0, 5),
-                 Food("fish", 1, 1, 5),
-                 Food("pineapple", 1, 1, 10),
-                 Food("cake", 1, 3, 15),
-                 Food("bread", 2, 0, 15)]
+                 Food("apple", 2, 0, 5),
+                 Food("canned_food", 1, 1, 5),
+                 Food("chicken", 2, 2, 10),
+                 Food("mushroom", 1, 0, 15),
+                 Food("pineapple", 4, 5, 15),
+                 Food("steak", 5, 2, 15)]
 WALKING_FOOD_WEIGHTS = [100, 60, 20, 15, 10, 10]
 
 FRIEND_FOODS = [Food("lollipop", 0, 1, 30),
-                Food("boba", 1, 2, 15)]
+                Food("pizza", 5, 3, 15),
+                Food("taco", 5, 5, 15)]
 
 # ---------------- Main Pep Pet Class -------------------------------
 class PepPet:
