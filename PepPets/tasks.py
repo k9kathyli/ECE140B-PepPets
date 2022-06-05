@@ -3,7 +3,7 @@ from locale import currency
 import random
 
 from friends import check_friend, add_friend
-from parent_tasks import get_task, check_task
+from parent_tasks import get_task
 
 '''
 Task types:
@@ -89,8 +89,7 @@ class SustainHappinessTask(Task):
 
 class CustomTask(Task):
     def printCustomTask(self, user):
-        if(check_task(user)):
-            print(get_task(user))
+        print(get_task(user))
 
 def TaskFactory(task_type):
     tasks = {

@@ -20,8 +20,8 @@ sheet = online_client.open("PepPet Users").sheet1
 def add_friend(user_pet_id, friend_id):
     for row in range(1, len(sheet.col_values(2))+1):
         if (sheet.cell(row, 2).value == user_pet_id):
-            new_friends_list = sheet.cell(row, 4).value + friend_id + "|"
-            sheet.update_cell(row, 4, new_friends_list)
+            new_friends_list = sheet.cell(row, 5).value + friend_id + "|"
+            sheet.update_cell(row, 5, new_friends_list)
 
 # Get friends list
 def get_friends(user_pet_id):
@@ -29,7 +29,7 @@ def get_friends(user_pet_id):
     friends_list = 0
     for row in range(1, len(sheet.col_values(2))+1):
         if (sheet.cell(row, 2).value == user_pet_id):
-            friends_list = sheet.cell(row, 4).value
+            friends_list = sheet.cell(row, 5).value
 
     return friends_list.split("|")
 
