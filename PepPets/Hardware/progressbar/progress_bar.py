@@ -9,9 +9,9 @@ IO.setup(6,IO.OUT)
 
 interval = .01
 
-bar1 = [4,17,27,22, 10]
-bar2 = [9, 11, 5, 6, 13]
-bar3 = [14, 15, 18, 23, 24]
+bar1 = [23,24,25,8,7]
+bar2 = [5,6,13,19,26]
+bar3 = [17,27,22,10,9]
 
 def initpins(pins):
     for x in pins:
