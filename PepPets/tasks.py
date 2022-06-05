@@ -1,3 +1,10 @@
+from asyncio import Task
+from locale import currency
+import random
+
+from friends import check_friend, add_friend
+from parent_tasks import get_task, check_task
+
 '''
 Task types:
     - "walk" : Walk x number of steps
@@ -5,11 +12,6 @@ Task types:
     - "feed" : Feed x number of times
     - "sustain": Keep above certain happiness or hunger all day 
 '''
-
-
-from asyncio import Task
-from locale import currency
-import random
 
 STEP_COUNTS = [10, 20, 30, 40]
 FOOD_COUNTS = [5, 6, 7, 8]
@@ -60,9 +62,15 @@ class FeedTask(Task):
             done = True
 
 class ConnectTask(Task):
+    def checkIfFriend(self, user, friend):
+        if(check_friend(user, friend)):
+            print("You have already connected with this friend")
+    def addNewFriend(self, user, friend):
+        if(not(check_friend(user, friend))):
+            add_friend(user, friend)
+            print("Connected with new friend")
     def printTask(self):
         print("     - Connect with 1 friend today." )
-
 
 class SustainHappinessTask(Task): 
     success = True
@@ -78,8 +86,11 @@ class SustainHappinessTask(Task):
         print("%s - Keep your pet above %i happiness until bedtime." % (status, self.threshold))
     def failTask(self):
         success = False
-# class CustomTask:
-    
+
+class CustomTask(Task):
+    def printCustomTask(self, user):
+        if(check_task(user)):
+            print(get_task(user))
 
 def TaskFactory(task_type):
     tasks = {
