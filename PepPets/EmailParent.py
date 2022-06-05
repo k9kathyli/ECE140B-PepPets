@@ -1,15 +1,17 @@
-import mysql.connector as mysql
+# Import Google Sheets API
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+# Import email modules
 import smtplib
 from email.message import EmailMessage
 EMAIL_ADDRESS = 'peppetsteam@gmail.com'
 EMAIL_PASSWORD = 'zzjbxeosrfohcecv'
 
-HOST = "db-mysql-sfo2-96686-do-user-11317347-0.b.db.ondigitalocean.com"
-DATABASE = "peppetEMAIL"
-PORT = 25060
-USER = "doadmin"
-PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
-
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+credentials = ServiceAccountCredentials.from_json_keyfile_name("Website/token.json", SCOPES)
+online_client = gspread.authorize(credentials)
+sheet = online_client.open("PepPet Users").sheet1
 
 msg = EmailMessage()
 msg['Subject'] = 'Pep Pet found a new Friend!'
@@ -17,28 +19,26 @@ msg['From'] = EMAIL_ADDRESS
 
 msg.set_content("Hello, your child's Pep Pet has made a brand new friend!")
 
+# Get email by pet ID
+def get_email(user_pet_id):
+    # Query sheet
+    email = 0
+    for row in range(1, len(sheet.col_values(2))+1):
+        if (sheet.cell(row, 2).value == user_pet_id):
+            email = sheet.cell(row, 1).value
 
-def getEmail(id):
-    db = mysql.connect(host=HOST, database=DATABASE,
-                       user=USER, password=PASSWORD, port=PORT)
-    print("connected to: ", db.get_server_info())
+    return email
 
-    cursor = db.cursor()
-    query = "SELECT owner from ID_Emails WHERE petid='" + id + "'"
-    cursor.execute(query)
-    record = cursor.fetchone()
-    if record is None:
-        return
-
-    return record[0]
-
-
-def sendEmail(id):
-    email = getEmail(id)
+# Send email by pet ID
+def send_email(user_pet_id):
+    email = get_email(user_pet_id)
     if email is None:
         print("No Email was found")
         exit
+
     msg['To'] = email
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
+
+send_email("Kendrick")
