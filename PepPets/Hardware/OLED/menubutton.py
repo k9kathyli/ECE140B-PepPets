@@ -117,10 +117,10 @@ def menuPage(press_idx):
     disp.image(image)
     disp.display()
 
-def displayString(string):
-    string = string.replace(" ","  ")
-    string = " ".join(string)
-    return string
+def displayString(text):
+    text = text.replace(" ","  ")
+    text = " ".join(text)
+    return text
 
 
 

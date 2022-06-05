@@ -91,8 +91,7 @@ class CustomTask(Task):
         Task.__init__(self, user)
         self.retrieveTask(user)
     def retrieveTask(self, user):
-        if(check_task(user)):
-            self.taskstring = get_task(user)
+        self.taskstring = get_task(user)
 
     def printTask(self):
         return self.taskstring
