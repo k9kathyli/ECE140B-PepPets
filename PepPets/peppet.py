@@ -414,8 +414,8 @@ class PepPet:
                         # feed(listoffoods[activeoption])
                     elif detect()[2]:
                         activeoption += 1
-            print(activepage)
-            print(activeoption)
+            # print(activepage)
+            # print(activeoption)
             time.sleep(0.1)
 
     def showPet(self):
