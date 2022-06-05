@@ -12,21 +12,31 @@ from oauth2client.service_account import ServiceAccountCredentials
 import urllib.parse
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name("token.json", SCOPES)
+credentials = ServiceAccountCredentials.from_json_keyfile_name("Website/token.json", SCOPES)
 online_client = gspread.authorize(credentials)
 sheet = online_client.open("PepPet Users").sheet1
 
 # Return home page
 def index_page(req):
-   return FileResponse("index.html")
+   return FileResponse("Website/index.html")
 
 # Return task page
 def task_page(req):
-   return FileResponse("task.html")
+   return FileResponse("Website/task.html")
 
 def decode_url(url):
     result = urllib.parse.unquote(url)
     return result
+
+# Add new row
+def update_cell(email, id, task, status, friends):
+    # Query sheet
+    new_row = len(sheet.col_values(1)) + 1
+    sheet.update_cell(new_row, 1, email)
+    sheet.update_cell(new_row, 2, id)
+    sheet.update_cell(new_row, 3, task)
+    sheet.update_cell(new_row, 4, status)
+    sheet.update_cell(new_row, 5, friends)
 
 # Function to access email and petID data
 def register_user(req):
@@ -35,10 +45,7 @@ def register_user(req):
     # Get petID from request
     user_pet_id = decode_url(req.matchdict['petID'])
 
-    # Query sheet
-    new_row = len(sheet.col_values(1)) + 1
-    sheet.update_cell(new_row, 1, user_email)
-    sheet.update_cell(new_row, 2, user_pet_id)
+    update_cell(user_email, user_pet_id, "N/A", "N/A", "N/A")
 
 # Function to create task
 def create_task(req):
@@ -48,9 +55,14 @@ def create_task(req):
     user_task = decode_url(req.matchdict['task_description'])
 
     # Query sheet
+    user_email = 0
+    user_friends = 0
     for row in range(1, len(sheet.col_values(2))+1):
         if (sheet.cell(row, 2).value == user_pet_id):
-            sheet.update_cell(row, 3, user_task)
+            user_email = sheet.cell(row, 1).value
+            user_friends = sheet.cell(row, 5).value
+
+    update_cell(user_email, user_pet_id, user_task, "FALSE", user_friends)
 
 # Function to confirm completion/deletion of task
 def finish_task(req):
@@ -59,11 +71,12 @@ def finish_task(req):
 
     # Query sheet
     for row in range(1, len(sheet.col_values(2))+1):
-        if (sheet.cell(row, 2).value == user_pet_id):
-            sheet.update_cell(row, 3, "")
+        if (sheet.cell(row, 2).value == user_pet_id and sheet.cell(row, 4).value == "FALSE"):
+            sheet.update_cell(row, 4, "TRUE")
+            break
 
 # Main entrypoint
-def run_server():
+if __name__ == '__main__':
    with Configurator() as config:
        # Create a route called home. Bind the view (defined by index_page) to the route named ‘home’
        config.add_route('home', '/')

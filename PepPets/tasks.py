@@ -3,7 +3,7 @@ from locale import currency
 import random
 
 from friends import check_friend, add_friend
-from parent_tasks import get_task, check_task
+from parent_tasks import get_task
 
 '''
 Task types:
