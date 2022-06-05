@@ -37,7 +37,4 @@ def get_friends(user_pet_id):
 def check_friend(user_pet_id, friend_id):
     friends_list = get_friends(user_pet_id)
 
-    if friend_id in friends_list:
-        return True
-    else:
-        return False
+    return friend_id in friends_list
