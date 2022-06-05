@@ -22,8 +22,3 @@ def check_task(user_pet_id):
     task = get_task(user_pet_id)
 
     return bool(task)
-
-
-# Main entrypoint
-if __name__ == '__main__':
-    print(check_task("Kendrick"))
