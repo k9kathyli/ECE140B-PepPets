@@ -225,7 +225,7 @@ class PepPet:
             self.addHappiness(5)
             self.addExperience(30)
             self.collectFood(FRIEND_FOODS[0])
-            email_parent.sendEmail(self.petID)
+            #email_parent.sendEmail(self.petID)
         else:
             print("It's nice to meet " + friend + "again!")
             self.addHappiness(3)
@@ -442,6 +442,7 @@ class PepPet:
         print("    Experience: " + str(self.experience))
         print("Foods: " + str(self.foods))
         # print(self.tasks)
+        print("Friends: " + str(self.friends))
         self.tasks["custom"].retrieveTask(self.name)
         for task in self.tasks.values():
             if task != None:
@@ -449,12 +450,13 @@ class PepPet:
         print("----------------------------")
     
     def receiveMessage(self):
+        COOLDOWN = False
         while not COOLDOWN:
             x=ser.readline()
             print(x)
-            x.encode("ascii", 'ignore')
+            x = x.decode("utf-8")
 
-            if x == "Chonk":
+            if x == "Beans":
                 self.connectWithFriend(x)
                 COOLDOWN = True
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
@@ -463,7 +465,7 @@ class PepPet:
         while not NIGHT:
             ser.write(bytes(self.name, "utf-8"))
             ser.flush()
-            print("sending")
+            #print("sending")
             timer.sleep(1)
 
 
@@ -483,7 +485,7 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Beans", 123456)
+myPet = PepPet("Chonk", 123456)
 # myPet.showPet()
 steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
@@ -507,8 +509,8 @@ happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
 progressBar.start()
-# writeID.start()
-# readID.start()
+writeID.start()
+readID.start()
 
 myPet.collectFood(steak)
 myPet.collectFood(steak)

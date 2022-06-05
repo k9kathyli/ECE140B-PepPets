@@ -14,5 +14,5 @@ def get_task(user_pet_id):
     for row in range(1, len(sheet.col_values(2))+1):
         if (sheet.cell(row, 2).value == user_pet_id and sheet.cell(row, 4).value == "FALSE"):
             task = sheet.cell(row, 3).value
-
+            break
     return task
