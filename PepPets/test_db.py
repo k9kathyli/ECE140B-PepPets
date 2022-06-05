@@ -8,6 +8,6 @@ USER = "doadmin"
 PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
 
 db = mysql.connect(host=HOST, database=DATABASE,
-                       user=USER, password=PASSWORD, port=PORT)
+                       user=USER, password=PASSWORD)
 cursor = db.cursor()
 print("connected to: ", db.get_server_info())

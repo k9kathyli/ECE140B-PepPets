@@ -7,19 +7,13 @@ import time as timer
 from threading import Thread
 from numpy import byte
 import serial
-
+import board
 import EmailParent
 from Hardware.pedometer.steps import track_steps
+from Hardware.OLED.menubutton import *
 # from Hardware.progressbar.progress_bar import progress, initpins, clear
 from tasks import TaskFactory
 
-'''
-IMPORTANT: For the MVP, one Pep Pet runs receiver_peppet.py and completely disregards sender_peppet.py
-The receiver Pep Pet continously listens for messages on a serial port. Once a sender Pet writes their message
-(their own ID), the receiver Pet will read it, write to the database that they've made friends with the sender, 
-and that the sender made friends with them. 
-'''
-print("here")
 
 # ---------------- Database credential variables ----------------------
 HOST = "db-mysql-sfo2-96686-do-user-11317347-0.b.db.ondigitalocean.com"
@@ -27,9 +21,9 @@ DATABASE = "peppetEMAIL"
 PORT = 25060
 USER = "doadmin"
 PASSWORD = "AVNS_1OJ-Nk7eUgMXbec"
-db = mysql.connect(host=HOST, database=DATABASE,
+# db = mysql.connect(host=HOST, database=DATABASE,
 #                        user=USER, password=PASSWORD, port=PORT)
-cursor = db.cursor()
+# cursor = db.cursor()
 # print("connected to: ", db.get_server_info())
 
 # ---------------- Serial Port Info -----------------------------------
@@ -263,6 +257,8 @@ class PepPet:
 
     def movementTracker(self):
         while not NIGHT:
+            self.showPet()
+            
             if track_steps():
                 self.global_steps += 10
                 print(self.name + " has walked " + str(self.global_steps))
@@ -304,11 +300,123 @@ class PepPet:
     #         progress(bar1, int(self.experience/10))
     #         timer.sleep(.5)
 
-    def buttonListener(self):
+    def buttonListener(self, press_idx):
+        moods = {"depressed" : "/menu/madge.png",
+        "unhappy" : "/menu/happy.png",
+        "bored" : "/menu/happy.png",
+        "sad" : "/menu/happy.png"}
+        activepage = "facepage"
+        activeoption = "menu"
         # Doesn't actually take any input YET, just prints the state of pet every 7 seconds.
         while not NIGHT:
-            self.showPet()
-            timer.sleep(7)
+            if activepage == "facepage":
+                if activeoption == "menu":
+                    press_idx = 1
+                if activeoption == "feed":
+                    press_idx = 2
+                faceIdle(press_idx,"/menu/madge.png")
+
+                if detect()[0] and activeoption == "feed":
+                    activeoption = "menu"
+                elif detect()[2] and activeoption == "menu":
+                    activeoption = "feed"
+                if detect()[1]:
+                    if activeoption == "menu":
+                        activepage = "menupage"
+                        activeoption = "task"
+                    elif activeoption == "feed":
+                        activepage = "foodpage"
+                        activeoption = 0
+                    
+                
+
+            elif activepage == "menupage":
+                # menupage()
+
+                # cursor on task
+                if activeoption == "task":
+                    if detect()[1]:
+                        activepage = "taskpage"
+                        activeoption = "backtomenu"
+                        
+                    elif detect()[2]:
+                        activeoption = "friends"
+                        
+
+                # cursor on friends
+                elif activeoption == "friends":
+                    if detect()[0]:
+                        activeoption = "task"
+                        
+                    elif detect()[1]:
+                        activepage = "friendspage"
+                        activeoption = "backtomenu"
+                        
+                    elif detect()[2]:
+                        activeoption = "back"
+                        
+
+                # cursor on back
+                elif activeoption == "back":
+                    if detect()[0]:
+                        activeoption = "friends"
+                    elif detect()[1]:
+                        activepage = "facepage"
+                        activeoption = "menu"
+                        
+
+            elif activepage == "taskpage":
+                # taskpage()
+
+                if detect()[1]:
+                    activepage = "menupage"
+                    activeoption = "task"
+                    
+
+            elif activepage == "friendspage":
+                # friendspage()
+
+                if detect()[1]:
+                    activepage = "menupage"
+                    activeoption = "task"
+
+            # default cursor on chicken
+            elif activepage == "foodpage":
+                feedPage()
+                listoffoods = list(self.foods.keys())
+                lastfood = len(listoffoods) - 1
+
+                if activeoption == 0:
+                    if detect()[0]:
+                        activepage = "facepage"
+                        activeoption = "menu"
+                    elif detect()[1]:
+                        print("feeding " + listoffoods[activeoption])
+                        # feed(listoffoods[activeoption])
+                    elif detect()[2]:
+                        activeoption += 1
+
+                elif activeoption == lastfood:
+                    if detect()[0]:
+                        activeoption -= 1
+                    elif detect()[1]:
+                        print("feeding " + listoffoods[activeoption])
+                        # feed(listoffoods[activeoption])
+                    elif detect()[2]:
+                        activepage = "facepage"
+                        activeoption = "menu"
+
+                else:
+                    if detect()[0]:
+                        activeoption -= 1
+                    elif detect()[1]:
+                        print("feeding " + listoffoods[activeoption])
+                        # feed(listoffoods[activeoption])
+                    elif detect()[2]:
+                        activeoption += 1
+            print(activepage)
+            print(activeoption)
+            time.sleep(0.1)
 
     def showPet(self):
         print("Name: " + self.name)
@@ -342,7 +450,6 @@ class PepPet:
             print("sending")
             timer.sleep(1)
 
-print("here")
 
 '''
 Thread 1: Hunger control: Fluctuates hunger over time
@@ -352,7 +459,9 @@ Thread 4: Button listener: Handles user input (feeding, customization, etc)
 Thread 5: Bar Control: Displays metric changes on the actual Pep Pet
 Thread 6/7: Read/write data on serial port continuously for friend connections
 '''
-# initpins(bar1)
+# setup()
+# press_idx = 1
+# # initpins(bar1)
 # initpins(bar2)
 # initpins(bar3)
 # clear(bar1)
@@ -368,54 +477,54 @@ print("here")
 hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
 movementTrack = Thread(target=myPet.movementTracker)
-buttonControl = Thread(target=myPet.buttonListener)
+buttonControl = Thread(target=myPet.buttonListener, args=(press_idx,))
 # progressBar = Thread(target=myPet.showPetbar)
 writeID = Thread(target=myPet.writeMessage)
 readID = Thread(target=myPet.receiveMessage)
 
 # PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
 
-print("here")
+print("here2")
 # Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()
 movementTrack.start()
 buttonControl.start()
 # progressBar.start()
-writeID.start()
-readID.start()
+# writeID.start()
+# readID.start()
 
 myPet.collectFood(steak)
 myPet.collectFood(steak)
-while True:
-    now = datetime.now()
-    now_time = now.time()
-    if now_time >= time(13,13) and now_time <= time(13,14):
-        print(now_time)
-        print ("It's night")
-        NIGHT = True
-    else:
-        print("It's day")
-        if NIGHT: 
-            NIGHT = False
-            COOLDOWN = False
-            # The Pet passively gains 5 exp every day
-            myPet.addExperience(5)
-            # We just woke up and should reset our tasks and restart our threads
-            myPet.resetTasks()
-            hungerLoss = Thread(target=myPet.hungerControl)
-            happinessLoss = Thread(target=myPet.happinessControl)
-            movementTrack = Thread(target=myPet.movementTracker)
-            buttonControl = Thread(target=myPet.buttonListener)
-            progressBar = Thread(target=myPet.showPetbar)
-            # PepPetThreads = [movementTrack, buttonControl, progressBar]
-            movementTrack.start()
-            buttonControl.start()
-            progressBar.start()
-        NIGHT = False
+# while True:
+#     now = datetime.now()
+#     now_time = now.time()
+#     if now_time >= time(13,13) and now_time <= time(13,14):
+#         print(now_time)
+#         print ("It's night")
+#         NIGHT = True
+#     else:
+#         print("It's day")
+#         if NIGHT: 
+#             NIGHT = False
+#             COOLDOWN = False
+#             # The Pet passively gains 5 exp every day
+#             myPet.addExperience(5)
+#             # We just woke up and should reset our tasks and restart our threads
+#             myPet.resetTasks()
+#             hungerLoss = Thread(target=myPet.hungerControl)
+#             happinessLoss = Thread(target=myPet.happinessControl)
+#             movementTrack = Thread(target=myPet.movementTracker)
+#             buttonControl = Thread(target=myPet.buttonListener)
+#             progressBar = Thread(target=myPet.showPetbar)
+#             # PepPetThreads = [movementTrack, buttonControl, progressBar]
+#             movementTrack.start()
+#             buttonControl.start()
+#             progressBar.start()
+#         NIGHT = False
     
-    #Wait an hour before checking again
-    timer.sleep(10)
+#     #Wait an hour before checking again
+#     timer.sleep(10)
 
 
 # # # myPet.hungerControl()

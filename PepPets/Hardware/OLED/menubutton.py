@@ -8,9 +8,10 @@ import time
 leftArrowPin = 16
 middleSelectPin = 20
 rightArrowPin = 21
+PATH = "/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED"
 
 # Default font
-font = ImageFont.truetype("PepPets/Hardware/OLED/arial.ttf", 8)
+font = ImageFont.truetype(PATH + "/arial.ttf", 8)
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -28,10 +29,10 @@ height = disp.height
 y_offset = -2
 
 # Face
-def faceIdle(press_idx):
+def faceIdle(press_idx, mood):
     disp.clear()
 
-    image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = Image.open(PATH + mood).resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
     image = ImageOps.invert(image)
     image=image.convert('1')
     draw = ImageDraw.Draw(image)
@@ -50,10 +51,11 @@ def faceIdle(press_idx):
 def feedPage():
     disp.clear()
 
-    image = Image.open('PepPets/Hardware/OLED/menu/madge.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = Image.open(PATH + '/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
     image = ImageOps.invert(image)
     image=image.convert('1')
-
+    print("here")
+    disp.image(image)
     disp.display()
     # time.sleep(2)
 
@@ -80,10 +82,127 @@ def detect():
 
 setup()
 press_idx = 1
+# activepage = "facepage"
+# activeoption = "menu"
+# foods = {"Chicken": 9999, "steak": 2, "sauce": 45, "stuff": 7}
 
-while True:
-    press_idx += 1 if detect()[0] == 1 or detect()[2] == 1 else 0
-    faceIdle(press_idx)
-    if(detect()[1] == 1):
-        feedPage()
-    time.sleep(0.1)
+# while True:
+    
+#     if activepage == "facepage":
+#         if activeoption == "menu":
+#             press_idx = 1
+#         if activeoption == "feed":
+#             press_idx = 2
+#         faceIdle(press_idx,"/menu/madge.png")
+
+#         if detect()[0] and activeoption == "feed":
+#             activeoption = "menu"
+#         elif detect()[2] and activeoption == "menu":
+#             activeoption = "feed"
+#         if detect()[1]:
+#             if activeoption == "menu":
+#                 activepage = "menupage"
+#                 activeoption = "task"
+#             elif activeoption == "feed":
+#                 activepage = "foodpage"
+#                 activeoption = 0
+            
+        
+
+#     elif activepage == "menupage":
+#         # menupage()
+
+#         # cursor on task
+#         if activeoption == "task":
+#             if detect()[1]:
+#                 activepage = "taskpage"
+#                 activeoption = "backtomenu"
+                
+#             elif detect()[2]:
+#                 activeoption = "friends"
+                
+
+#         # cursor on friends
+#         elif activeoption == "friends":
+#             if detect()[0]:
+#                 activeoption = "task"
+                
+#             elif detect()[1]:
+#                 activepage = "friendspage"
+#                 activeoption = "backtomenu"
+                
+#             elif detect()[2]:
+#                 activeoption = "back"
+                
+
+#         # cursor on back
+#         elif activeoption == "back":
+#             if detect()[0]:
+#                 activeoption = "friends"
+#             elif detect()[1]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
+                
+
+#     elif activepage == "taskpage":
+#         # taskpage()
+
+#         if detect()[1]:
+#             activepage = "menupage"
+#             activeoption = "task"
+            
+
+#     elif activepage == "friendspage":
+#         # friendspage()
+
+#         if detect()[1]:
+#             activepage = "menupage"
+#             activeoption = "task"
+
+#     # default cursor on chicken
+#     elif activepage == "foodpage":
+#         feedPage()
+#         listoffoods = list(foods.keys())
+#         lastfood = len(listoffoods) - 1
+
+#         if activeoption == 0:
+#             if detect()[0]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
+#             elif detect()[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif detect()[2]:
+#                 activeoption += 1
+
+#         elif activeoption == lastfood:
+#             if detect()[0]:
+#                 activeoption -= 1
+#             elif detect()[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif detect()[2]:
+#                 activepage = "facepage"
+#                 activeoption = "menu"
+
+#         else:
+#             if detect()[0]:
+#                 activeoption -= 1
+#             elif detect()[1]:
+#                 print("feeding " + listoffoods[activeoption])
+#                 # feed(listoffoods[activeoption])
+#             elif detect()[2]:
+#                 activeoption += 1
+
+
+
+
+            
+
+
+
+
+#     print(activepage)
+#     print(activeoption)
+#     print("-----------------------------")
+#     time.sleep(1)
