@@ -10,6 +10,8 @@ middleSelectPin = 20
 rightArrowPin = 21
 PATH = "/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED"
 
+# 128 x 64 pixel display
+
 # Default font
 font = ImageFont.truetype(PATH + "/arial.ttf", 8)
 
@@ -48,7 +50,7 @@ def faceIdle(press_idx, mood):
     disp.image(image)
     disp.display()
 
-def feedPage():
+def feedPage(tasks):
     disp.clear()
 
     image = Image.open(PATH + '/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
@@ -57,13 +59,20 @@ def feedPage():
     print("here")
     disp.image(image)
     disp.display()
-    # time.sleep(2)
 
-    # image = Image.open('PepPets/Hardware/OLED/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
-    # image = ImageOps.invert(image)
-    # image=image.convert('1')
+def taskPage():
+    # 128 x 64 pixel display
 
-    # disp.display()
+    disp.clear()
+    
+    image = Image.open(PATH + "/menu/blank.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((12, y_offset+5), "Task 1",  font=font, fill=255)
+    draw.text((12, y_offset+10), "Task 2",  font=font, fill=255)
+    draw.text((12, y_offset+24), "Task 3",  font=font, fill=255)
 
 # Set buttonPin to INPUT mode with pull-up resistor
 def setup():
