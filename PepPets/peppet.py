@@ -247,13 +247,12 @@ class PepPet:
 
     def setMood(self):
         # Will have to associate with right picture in hardware
-        moods = ["excited", "happy", "fine", "mischievious", "neutral",
-                 "bored", "confused", "sad", "angry", "crying", "sick"]
+        moods = ["angelic", "happy", "awe", "smug", "meme", "confounded", "cry", "hungry", "madge", "tired", "sleepy"]
 
         if self.hunger < 3:
             self.face = "hungry"
         if self.happiness < 3:
-            self.face = random.choice(["depressed", "sad", "bored", "unhappy"])
+            self.face = random.choice(["cry", "hungry", "madge", "tired", "sleepy"])
         else:
             face_num = int((self.hunger + self.happiness)/2)
             self.face = moods[10 - face_num]
