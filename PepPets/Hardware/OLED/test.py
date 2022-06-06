@@ -71,7 +71,7 @@ def new_friend():
     draw = ImageDraw.Draw(image)
 
     draw.text((40, 2), "You have",  font=font, fill=255)
-    draw.text((34, 11), "made a new",  font=font, fill=255)
+    draw.text((34, 11), "connected a",  font=font, fill=255)
     draw.text((52, 21), "friend",  font=font, fill=255)
     disp.image(image)
     disp.display()
@@ -79,4 +79,3 @@ def new_friend():
     font = ImageFont.truetype(PATH + "/arial.ttf", 8)
 
 new_friend()
-
