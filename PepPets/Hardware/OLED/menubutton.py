@@ -147,7 +147,7 @@ def menuPage(press_idx):
 def displayString(text):
     text = text.replace(" ","  ")
     text = " ".join(text)
-    return text
+    return text.upper()
 
 
 

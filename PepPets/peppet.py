@@ -469,8 +469,11 @@ class PepPet:
         while not NIGHT:
             x=ser.readline()
             print(x)
-            x = x.decode("utf-8")
 
+            try:
+                x = x.decode("utf-8")
+            except:
+                continue
             if x == "Chonk":
                 self.connectWithFriend(x)
                 break
