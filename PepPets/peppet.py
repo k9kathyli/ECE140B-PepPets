@@ -79,7 +79,6 @@ class PepPet:
     face = "depressed"
     # Info
     name = "Pep Pet 1"
-    unique_id = 1
     global_steps = 0
 
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
@@ -89,8 +88,7 @@ class PepPet:
     friends = []
 
     # Construct a Pep Pet with a name
-    def __init__(self, name, id):
-        self.unique_id = id
+    def __init__(self, name):
         self.name = name
         self.resetTasks()
 
@@ -233,7 +231,7 @@ class PepPet:
             self.addHappiness(5)
             self.addExperience(30)
             self.collectFood(FRIEND_FOODS[0])
-            email_parent.send_email(self.petID)
+            email_parent.send_email(self.name)
         else:
             print("It's nice to meet " + friend + "again!")
             self.addHappiness(3)
@@ -497,12 +495,10 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk", 123456)
+myPet = PepPet("Chonk")
 # myPet.showPet()
 # steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
-
-print("here")
 
 hungerLoss = Thread(target=myPet.hungerControl)
 happinessLoss = Thread(target=myPet.happinessControl)
@@ -514,7 +510,6 @@ readID = Thread(target=myPet.receiveMessage)
 
 # PepPetThreads = [hungerLoss, happinessLoss, movementTrack, buttonControl, progressBar, writeID, readID]
 
-print("here2")
 # Start hunger and happiness fluctuators
 hungerLoss.start()
 happinessLoss.start()

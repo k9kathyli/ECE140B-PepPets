@@ -23,7 +23,6 @@ class Task:
     rewarded = False
     def __init__(self, user): 
         self.reward = random.choice(EXP_REWARD)
-        print(self.reward)
     def setDone(self):
         self.done = True
     def setRewarded(self):
