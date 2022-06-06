@@ -12,7 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import urllib.parse
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name("token.json", SCOPES)
+credentials = ServiceAccountCredentials.from_json_keyfile_name("Website/token.json", SCOPES)
 online_client = gspread.authorize(credentials)
 sheet = online_client.open("PepPet Users").sheet1
 
