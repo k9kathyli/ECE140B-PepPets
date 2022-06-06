@@ -466,7 +466,7 @@ class PepPet:
             print(x)
             x = x.decode("utf-8")
 
-            if x == "Beans":
+            if x == "Chonk":
                 self.connectWithFriend(x)
                 break
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
@@ -495,7 +495,7 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk")
+myPet = PepPet("Beans")
 # myPet.showPet()
 # steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
