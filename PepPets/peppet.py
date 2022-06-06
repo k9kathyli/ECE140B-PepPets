@@ -41,7 +41,7 @@ COOLDOWN = False
 
 # ---------------- Global Food and Weights----------------------------
 class Food:
-    def __init__(self, name="Chicken", hunger=1, happiness=0, exp=0):
+    def __init__(self, name="chicken", hunger=1, happiness=0, exp=0):
         self.name = name
         self.hunger_gain = hunger
         self.happiness_gain = happiness
@@ -49,7 +49,6 @@ class Food:
 
 WALKING_FOODS = ["nothing",
                  Food("apple", 2, 0, 5),
-                 Food("canned_food", 1, 1, 5),
                  Food("chicken", 2, 2, 10),
                  Food("mushroom", 1, 0, 15),
                  Food("pineapple", 4, 5, 15),
@@ -60,11 +59,21 @@ FRIEND_FOODS = [Food("lollipop", 0, 1, 30),
                 Food("pizza", 5, 3, 15),
                 Food("taco", 5, 5, 15)]
 
+FOODS= {"canned_food" : Food("canned_food" , 1, 2, 3),
+        "apple" : Food("apple", 2, 0, 5),
+        "chicken" : Food("chicken", 2, 2, 10),
+        "mushroom" : Food("pineamushroompple", 1, 0, 15),
+        "pineapple": Food("pineapple", 4, 5, 15),
+        "steak" : Food("steak", 5, 2, 15),
+        "lollipop" : Food("lollipop", 0, 1, 30),
+        "pizza" : Food("pizza", 5, 3, 15),
+        "taco" : Food("taco", 5, 5, 15)}
+
 # ---------------- Main Pep Pet Class -------------------------------
 class PepPet:
     # Metrics
     happiness = 0
-    hunger = 10
+    hunger = 5
     experience = 0
     level = 0
     face = "depressed"
@@ -76,7 +85,7 @@ class PepPet:
     tasks = {"walk": None, "feed": None, "connect": None, "sustain": None}
     closet = []
     # Dictionary of food name values mapped to the quantity of that food
-    foods = {"Chicken": 9999}
+    foods = {"canned_food": 9999}
     friends = []
 
     # Construct a Pep Pet with a name
@@ -107,12 +116,9 @@ class PepPet:
         - food : a Food object
     """
 
-    def feed(self, food):
-        if food.name not in self.foods or self.foods[food.name] == 0:
-            print("Unable to eat this food")
-            print("----------------------------")
-            return
-        print("Feeding " + self.name + " " + food.name)
+    def feed(self, foodname):
+        food = FOODS[foodname]
+        print("Feeding " + self.name + " " + foodname)
         self.addHappiness(food.happiness_gain)
         self.addHunger(food.hunger_gain)
         self.addExperience(food.exp)
@@ -275,7 +281,7 @@ class PepPet:
                 self.addExperience(1)
 
             
-            if self.global_steps % 25 == 0:
+            if self.global_steps % 20 == 0:
                 # Every 25 steps hunger goes down 1 and there is a chance to pick up a random food!
                 self.addHunger(-1)
                 # Pick a random food (foods have different weights)
@@ -300,7 +306,8 @@ class PepPet:
             progress(bar1, self.hunger)
             progress(bar2, self.happiness)
             progress(bar3, int(self.experience/10))
-            timer.sleep(.5)
+            print(int(self.experience/10))
+            timer.sleep(.01)
 
     def buttonListener(self, press_idx):
         moods = {"depressed" : "/menu/madge.png",
@@ -396,9 +403,10 @@ class PepPet:
 
             # default cursor on chicken
             elif activepage == "foodpage":
-                feedPage()
-                listoffoods = list(foods.keys())
+                listoffoods = list(self.foods.keys())
+                print(listoffoods)
                 lastfood = len(listoffoods) - 1
+                feedPage(listoffoods[activeoption], self.foods)
 
                 if activeoption == 0:
                     if buttonPress[0]:
@@ -406,16 +414,20 @@ class PepPet:
                         activeoption = "menu"
                     elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
-                        # feed(listoffoods[activeoption])
+                        self.feed(listoffoods[activeoption])
                     elif buttonPress[2]:
-                        activeoption += 1
+                        if len(listoffoods) == 1:
+                            activepage = "facepage"
+                            activeoption = "menu"
+                        else:
+                            activeoption += 1
 
                 elif activeoption == lastfood:
                     if buttonPress[0]:
                         activeoption -= 1
                     elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
-                        # feed(listoffoods[activeoption])
+                        self.feed(listoffoods[activeoption])
                     elif buttonPress[2]:
                         activepage = "facepage"
                         activeoption = "menu"
@@ -425,7 +437,7 @@ class PepPet:
                         activeoption -= 1
                     elif buttonPress[1]:
                         print("feeding " + listoffoods[activeoption])
-                        # feed(listoffoods[activeoption])
+                        self.feed(listoffoods[activeoption])
                     elif buttonPress[2]:
                         activeoption += 1
 
@@ -457,7 +469,7 @@ class PepPet:
             print(x)
             x = x.decode("utf-8")
 
-            if x == "Beans":
+            if x == "Chonk":
                 self.connectWithFriend(x)
                 COOLDOWN = True
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
@@ -486,9 +498,9 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Chonk", 123456)
+myPet = PepPet("Beans", 123456)
 # myPet.showPet()
-steak = Food("Steak", 3, 1, 30)
+# steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
 
 print("here")
@@ -513,8 +525,6 @@ progressBar.start()
 writeID.start()
 readID.start()
 
-myPet.collectFood(steak)
-myPet.collectFood(steak)
 # while True:
 #     now = datetime.now()
 #     now_time = now.time()

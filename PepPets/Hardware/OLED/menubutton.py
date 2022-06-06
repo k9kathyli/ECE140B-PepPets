@@ -50,12 +50,39 @@ def faceIdle(press_idx, mood):
     disp.image(image)
     disp.display()
 
-def feedPage():
-    disp.clear()
+FOODS= {"canned_food" : ("canned_food" , 1, 2, 3),
+        "apple" : ("apple", 2, 0, 5),
+        "chicken" : ("chicken", 2, 2, 10),
+        "mushroom" : ("pineamushroompple", 1, 0, 15),
+        "pineapple": ("pineapple", 4, 5, 15),
+        "steak" : ("steak", 5, 2, 15),
+        "lollipop" : ("lollipop", 0, 1, 30),
+        "pizza" : ("pizza", 5, 3, 15),
+        "taco" : ("taco", 5, 5, 15)
+}
 
-    image = Image.open(PATH + '/menu/happy.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+def feedPage(foodItem, foodDict):
+    disp.clear()
+    foodQuant = foodDict[foodItem]
+    image = Image.open(PATH + '/food/' + foodItem + '.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
     image = ImageOps.invert(image)
     image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    if int(time.time() * 2) % 12 < 6:
+        draw.text((10, y_offset+26), displayString(foodItem),  font=font, fill=255)
+        draw.text((80, y_offset+26), displayString("x"+str(foodQuant)),  font=font, fill=255)
+        
+    else:
+        draw.text((8, y_offset+26), displayString("HPY:" + str(FOODS[foodItem][1])),  font=font, fill=255)
+        draw.text((50, y_offset+26), displayString("FD:" + str(FOODS[foodItem][2])),  font=font, fill=255)
+        draw.text((94, y_offset+26), displayString("EXP:" + str(FOODS[foodItem][2])),  font=font, fill=255)
+    # print(foodItem)
+    # print(foodQuant)
+    # print(FOODS[foodItem][1])
+    # print(FOODS[foodItem][2])
+    # print(FOODS[foodItem][3])
+
     disp.image(image)
     disp.display()
 
@@ -161,7 +188,6 @@ setup()
 press_idx = 1
 activepage = "facepage"
 activeoption = "menu"
-foods = {"Chicken": 9999, "steak": 2, "sauce": 45, "stuff": 7}
 
 # while True:
 
