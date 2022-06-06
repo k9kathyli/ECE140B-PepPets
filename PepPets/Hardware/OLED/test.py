@@ -10,11 +10,6 @@ middleSelectPin = 20
 rightArrowPin = 21
 PATH = "/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED"
 
-# 128 x 64 pixel display
-
-# Default font
-font = ImageFont.truetype(PATH + "/arial.ttf", 9)
-
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
 # Create the SSD1306 OLED class.
@@ -30,8 +25,10 @@ width = disp.width
 height = disp.height
 y_offset = -2
 
-# Face
-def faceIdle():
+# Food
+def food():
+    # Default font
+    font = ImageFont.truetype(PATH + "/arial.ttf", 9)
     disp.clear()
 
     image = Image.open("/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED/food/pizza.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
@@ -45,4 +42,41 @@ def faceIdle():
     disp.image(image)
     disp.display()
 
-faceIdle()
+    font = ImageFont.truetype(PATH + "/arial.ttf", 8)
+
+def connecting():
+    # Default font
+    font = ImageFont.truetype(PATH + "/arial.ttf", 15)
+    disp.clear()
+
+    image = Image.open("/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED/connect/connecting.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((28, 7), "Connecting",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
+    font = ImageFont.truetype(PATH + "/arial.ttf", 8)
+
+def new_friend():
+    # Default font
+    font = ImageFont.truetype(PATH + "/arial.ttf", 12)
+    disp.clear()
+
+    image = Image.open("/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED/connect/connecting.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((40, 2), "You have",  font=font, fill=255)
+    draw.text((34, 11), "made a new",  font=font, fill=255)
+    draw.text((52, 21), "friend",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
+    font = ImageFont.truetype(PATH + "/arial.ttf", 8)
+
+new_friend()
+
