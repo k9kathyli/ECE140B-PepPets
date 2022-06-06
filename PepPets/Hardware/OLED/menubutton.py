@@ -184,6 +184,40 @@ def detect():
 
     return (leftArrowState, middleSelectState, rightArrowState)
 
+def connecting():
+    # Default font
+    font = ImageFont.truetype(PATH + "/arial.ttf", 15)
+    disp.clear()
+
+    image = Image.open("/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED/connect/connecting.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((28, 7), "Connecting",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
+    font = ImageFont.truetype(PATH + "/arial.ttf", 8)
+
+def new_friend():
+    # Default font
+    font = ImageFont.truetype(PATH + "/arial.ttf", 12)
+    disp.clear()
+
+    image = Image.open("/home/pi/Desktop/ECE140B-PepPets/PepPets/Hardware/OLED/connect/connecting.png").resize((disp.width, disp.height), Image.ANTIALIAS).convert('L')
+    image = ImageOps.invert(image)
+    image=image.convert('1')
+    draw = ImageDraw.Draw(image)
+
+    draw.text((40, 2), "You have",  font=font, fill=255)
+    draw.text((34, 11), "connected a",  font=font, fill=255)
+    draw.text((52, 21), "friend",  font=font, fill=255)
+    disp.image(image)
+    disp.display()
+
+    font = ImageFont.truetype(PATH + "/arial.ttf", 8)
+
 setup()
 press_idx = 1
 activepage = "facepage"

@@ -225,6 +225,11 @@ class PepPet:
     '''
 
     def connectWithFriend(self, friend):
+        connecting()
+        timer.sleep(3)
+        new_friend()
+        timer.sleep(3)
+        
         if friend not in self.friends:
             self.friends.append(friend)
             print(self.name + "made a new friend: " + friend)
