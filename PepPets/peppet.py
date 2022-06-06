@@ -233,7 +233,7 @@ class PepPet:
             self.addHappiness(5)
             self.addExperience(30)
             self.collectFood(FRIEND_FOODS[0])
-            #email_parent.sendEmail(self.petID)
+            email_parent.send_email(self.petID)
         else:
             print("It's nice to meet " + friend + "again!")
             self.addHappiness(3)
@@ -463,15 +463,14 @@ class PepPet:
         print("----------------------------")
     
     def receiveMessage(self):
-        COOLDOWN = False
-        while not COOLDOWN:
+        while not NIGHT:
             x=ser.readline()
             print(x)
             x = x.decode("utf-8")
 
-            if x == "Chonk":
+            if x == "Beans":
                 self.connectWithFriend(x)
-                COOLDOWN = True
+                break
         # TODO: Write to table that Beans is friends with Chonk and Chonk is friends with Beans  
 
     def writeMessage(self):
@@ -498,7 +497,7 @@ initpins(bar3)
 clear(bar1)
 clear(bar2)
 clear(bar3)
-myPet = PepPet("Beans", 123456)
+myPet = PepPet("Chonk", 123456)
 # myPet.showPet()
 # steak = Food("Steak", 3, 1, 30)
 # chicken = Food("Chicken")
